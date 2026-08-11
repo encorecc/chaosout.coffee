@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Brew Plan Log</title>
+<style>
+  :root {
+    --bg: #f7f4ef;
+    --panel: #ffffff;
+    --ink: #2b2420;
+    --muted: #7a6f63;
+    --border: #e2d9cd;
+    --accent: #8a5a34;
+    --accent-ink: #ffffff;
+    --good: #4c7a4c;
+    --warn: #b3762c;
+    --chip-bg: #f0e6d8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+  header h1 { margin: 0; font-size: 1.3rem; }
+  header p { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.9rem; }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .panel h2 {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 1rem;
+  }
+  fieldset legend {
+    font-weight: 600;
+    color: var(--accent);
+    padding: 0 0 0.4rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: #fffdfa;
+    color: var(--ink);
+    font-family: inherit;
+  }
+  textarea { resize: vertical; min-height: 3.5rem; }
+  .time-pair { display: flex; gap: 0.4rem; align-items: center; }
+  .time-pair input { width: 4.5rem; }
+  .time-pair span { color: var(--muted); font-size: 0.8rem; }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tag {
+    padding: 0.3rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--chip-bg);
+    font-size: 0.82rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .tag.selected {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+
+  .rating {
+    display: flex;
+    gap: 0.25rem;
+    font-size: 1.5rem;
+  }
+  .rating span { cursor: pointer; color: var(--border); }
+  .rating span.on { color: var(--accent); }
+
+  .actions {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+  button {
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  button.primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  button.ghost { background: transparent; }
+  button:hover { filter: brightness(0.97); }
+
+  .toolbar {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: end;
+    margin-bottom: 1rem;
+  }
+  .toolbar > div { flex: 1; min-width: 160px; }
+
+  .best-banner {
+    background: #eef4ea;
+    border: 1px solid #c9dcbe;
+    color: var(--good);
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .best-banner.show { display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 0.5rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; }
+  tr.best td { background: #eef4ea; }
+  .row-actions { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+  .row-actions button { padding: 0.3rem 0.55rem; font-size: 0.78rem; }
+  .stars-mini { color: var(--accent); letter-spacing: 1px; }
+  .empty-state { color: var(--muted); text-align: center; padding: 2rem; }
+  .badge {
+    display: inline-block;
+    background: var(--chip-bg);
+    color: var(--ink);
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    margin-left: 0.35rem;
+  }
+  .footer-note { color: var(--muted); font-size: 0.78rem; margin-top: 0.5rem; }
+  .diff-hint { color: var(--warn); font-size: 0.75rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>☕ Brew Plan Log</h1>
+  <p>記錄每次沖煮的配方與品評結果，用同一款豆子反覆比較、逐步調整，找出最佳沖煮參數。</p>
+</header>
+
+<main>
+
+  <section class="panel">
+    <h2 id="form-title">新增 Brew Plan</h2>
+    <form id="brew-form">
+      <input type="hidden" id="entry-id" />
+      <input type="hidden" id="parent-id" />
+
+      <fieldset>
+        <legend>基本資訊</legend>
+        <div class="grid">
+          <div>
+            <label for="brewerName">Brewer / Student Name</label>
+            <input id="brewerName" type="text" />
+          </div>
+          <div>
+            <label for="date">Date</label>
+            <input id="date" type="date" required />
+          </div>
+          <div>
+            <label for="coffeeName">Coffee (origin / variety)</label>
+            <input id="coffeeName" type="text" required placeholder="e.g. Ethiopia Yirgacheffe" />
+          </div>
+          <div>
+            <label for="processing">Processing</label>
+            <select id="processing">
+              <option>Washed</option>
+              <option>Natural</option>
+              <option>Pulped Natural</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Brewing Method</legend>
+        <div class="grid">
+          <div>
+            <label for="brewMethod">Method</label>
+            <select id="brewMethod">
+              <option>Immersion</option>
+              <option>Gravity</option>
+              <option>Vacuum</option>
+              <option>Boiling</option>
+            </select>
+          </div>
+          <div>
+            <label for="brewDevice">Brewing Device</label>
+            <input id="brewDevice" type="text" placeholder="e.g. V60, AeroPress" />
+          </div>
+          <div>
+            <label for="filterMedium">Filter Medium</label>
+            <select id="filterMedium">
+              <option>Paper</option>
+              <option>Cloth</option>
+              <option>Sieve (Metal)</option>
+            </select>
+          </div>
+          <div>
+            <label for="grindSetting">Grind Setting</label>
+            <select id="grindSetting">
+              <option>Fine</option>
+              <option>Medium</option>
+              <option>Coarse</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Brew Recipe</legend>
+        <div class="grid">
+          <div>
+            <label for="ratio">Coffee to Water Ratio (1 : x)</label>
+            <input id="ratio" type="number" step="0.1" min="0" placeholder="e.g. 15" />
+          </div>
+          <div>
+            <label for="coffeeDose">Coffee Dose (g)</label>
+            <input id="coffeeDose" type="number" step="0.1" min="0" />
+          </div>
+          <div>
+            <label for="temperature">Temperature (°C)</label>
+            <input id="temperature" type="number" step="1" />
+          </div>
+          <div>
+            <label for="waterDose">Water Dose (g / mL)</label>
+            <input id="waterDose" type="number" step="1" min="0" />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Water Cycle</legend>
+        <div class="grid">
+          <div>
+            <label for="pauseForBloom">Pause for Bloom</label>
+            <select id="pauseForBloom">
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+          <div>
+            <label for="bloomWater">Quantity of Water for Wetting (g)</label>
+            <input id="bloomWater" type="number" step="1" min="0" />
+          </div>
+          <div>
+            <label for="turbulence">Turbulence During Bloom</label>
+            <select id="turbulence">
+              <option>Pouring</option>
+              <option>Stirring</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label for="pauseDuration">Duration of Pause (sec)</label>
+            <input id="pauseDuration" type="number" step="1" min="0" />
+          </div>
+          <div>
+            <label for="waterDeliveryMethod">Water Delivery Method</label>
+            <select id="waterDeliveryMethod">
+              <option>Continuous</option>
+              <option>Pulsed</option>
+              <option>Coffee added to water</option>
+            </select>
+          </div>
+          <div>
+            <label for="waterDeliveryTime">Water Delivery Time</label>
+            <div class="time-pair">
+              <input id="waterDeliveryMin" type="number" min="0" placeholder="min" />
+              <span>:</span>
+              <input id="waterDeliverySec" type="number" min="0" max="59" placeholder="sec" />
+            </div>
+          </div>
+          <div>
+            <label for="totalContactTime">Total Contact Time</label>
+            <div class="time-pair">
+              <input id="contactMin" type="number" min="0" placeholder="min" />
+              <span>:</span>
+              <input id="contactSec" type="number" min="0" max="59" placeholder="sec" />
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Sensory Assessment</legend>
+        <div class="grid">
+          <div>
+            <label for="acidity">Acidity</label>
+            <select id="acidity">
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </div>
+          <div>
+            <label for="aftertaste">Aftertaste</label>
+            <select id="aftertaste">
+              <option>Short</option>
+              <option>Medium</option>
+              <option>Long</option>
+            </select>
+          </div>
+          <div>
+            <label for="body">Body</label>
+            <select id="body">
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </div>
+          <div>
+            <label for="colour">Colour</label>
+            <select id="colour">
+              <option>Light</option>
+              <option>Medium</option>
+              <option>Dark</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <label>Aroma / Flavour</label>
+          <div class="tags" id="flavour-tags">
+            <span class="tag" data-flavour="Floral">Floral</span>
+            <span class="tag" data-flavour="Nutty">Nutty</span>
+            <span class="tag" data-flavour="Earthy">Earthy</span>
+            <span class="tag" data-flavour="Tea-like">Tea-like</span>
+            <span class="tag" data-flavour="Chocolatey">Chocolatey</span>
+            <span class="tag" data-flavour="Caramel">Caramel</span>
+          </div>
+          <input id="flavourOther" type="text" placeholder="Other flavours (comma separated)" style="margin-top:0.5rem;" />
+        </div>
+        <div style="margin-top:0.75rem;">
+          <label>Overall Rating</label>
+          <div class="rating" id="rating">
+            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Learnings</legend>
+        <textarea id="learnings" placeholder="這次沖煮的心得、下次要調整的地方..."></textarea>
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" class="ghost" id="clear-form">清空表單</button>
+        <button type="submit" class="primary" id="submit-btn">儲存 Brew Plan</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>紀錄與比較</h2>
+    <div class="toolbar">
+      <div>
+        <label for="filter-coffee">依咖啡豆篩選</label>
+        <select id="filter-coffee">
+          <option value="">全部</option>
+        </select>
+      </div>
+      <div>
+        <button type="button" id="export-btn">匯出 JSON</button>
+      </div>
+      <div>
+        <label for="import-input" style="cursor:pointer;">
+          <input id="import-input" type="file" accept="application/json" style="display:none;" />
+          <button type="button" id="import-btn">匯入 JSON</button>
+        </label>
+      </div>
+    </div>
+
+    <div class="best-banner" id="best-banner"></div>
+
+    <div id="history-wrap">
+      <table id="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Coffee</th>
+            <th>Recipe (ratio / dose / temp)</th>
+            <th>Bloom / Contact Time</th>
+            <th>Sensory</th>
+            <th>Rating</th>
+            <th>Learnings</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="history-body"></tbody>
+      </table>
+      <div class="empty-state" id="empty-state">還沒有紀錄，開始記錄你的第一次 Brew Plan 吧。</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  const STORAGE_KEY = "brewPlanLog.entries.v1";
+
+  /** @typedef Entry stored fields — see form ids for shape */
+
+  function loadEntries() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      console.error("Failed to load entries", e);
+      return [];
+    }
+  }
+
+  function saveEntries(entries) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  }
+
+  let entries = loadEntries();
+  let selectedFlavours = new Set();
+  let currentRating = 0;
+
+  const form = document.getElementById("brew-form");
+  const formTitle = document.getElementById("form-title");
+  const submitBtn = document.getElementById("submit-btn");
+  const entryIdField = document.getElementById("entry-id");
+  const parentIdField = document.getElementById("parent-id");
+  const filterCoffeeSelect = document.getElementById("filter-coffee");
+  const historyBody = document.getElementById("history-body");
+  const emptyState = document.getElementById("empty-state");
+  const bestBanner = document.getElementById("best-banner");
+
+  document.getElementById("date").valueAsDate = new Date();
+
+  // --- Flavour tags ---
+  document.getElementById("flavour-tags").addEventListener("click", (e) => {
+    const tag = e.target.closest(".tag");
+    if (!tag) return;
+    const f = tag.dataset.flavour;
+    if (selectedFlavours.has(f)) {
+      selectedFlavours.delete(f);
+      tag.classList.remove("selected");
+    } else {
+      selectedFlavours.add(f);
+      tag.classList.add("selected");
+    }
+  });
+
+  // --- Rating stars ---
+  const ratingEl = document.getElementById("rating");
+  ratingEl.addEventListener("click", (e) => {
+    const star = e.target.closest("span[data-v]");
+    if (!star) return;
+    currentRating = Number(star.dataset.v);
+    renderRating();
+  });
+  function renderRating() {
+    ratingEl.querySelectorAll("span").forEach((s) => {
+      s.classList.toggle("on", Number(s.dataset.v) <= currentRating);
+    });
+  }
+
+  function timeToSeconds(min, sec) {
+    const m = Number(min) || 0;
+    const s = Number(sec) || 0;
+    if (!min && !sec) return null;
+    return m * 60 + s;
+  }
+  function secondsToTime(total) {
+    if (total === null || total === undefined || isNaN(total)) return { min: "", sec: "" };
+    return { min: Math.floor(total / 60), sec: total % 60 };
+  }
+
+  function readForm() {
+    const flavours = Array.from(selectedFlavours);
+    const other = document.getElementById("flavourOther").value.trim();
+    if (other) {
+      other.split(",").map((s) => s.trim()).filter(Boolean).forEach((f) => flavours.push(f));
+    }
+    return {
+      id: entryIdField.value || crypto.randomUUID(),
+      parentId: parentIdField.value || null,
+      brewerName: document.getElementById("brewerName").value.trim(),
+      date: document.getElementById("date").value,
+      coffeeName: document.getElementById("coffeeName").value.trim(),
+      processing: document.getElementById("processing").value,
+      brewMethod: document.getElementById("brewMethod").value,
+      brewDevice: document.getElementById("brewDevice").value.trim(),
+      filterMedium: document.getElementById("filterMedium").value,
+      grindSetting: document.getElementById("grindSetting").value,
+      ratio: document.getElementById("ratio").value,
+      coffeeDose: document.getElementById("coffeeDose").value,
+      temperature: document.getElementById("temperature").value,
+      waterDose: document.getElementById("waterDose").value,
+      pauseForBloom: document.getElementById("pauseForBloom").value,
+      bloomWater: document.getElementById("bloomWater").value,
+      turbulence: document.getElementById("turbulence").value,
+      pauseDuration: document.getElementById("pauseDuration").value,
+      waterDeliveryMethod: document.getElementById("waterDeliveryMethod").value,
+      waterDeliveryTimeSec: timeToSeconds(
+        document.getElementById("waterDeliveryMin").value,
+        document.getElementById("waterDeliverySec").value
+      ),
+      totalContactTimeSec: timeToSeconds(
+        document.getElementById("contactMin").value,
+        document.getElementById("contactSec").value
+      ),
+      acidity: document.getElementById("acidity").value,
+      aftertaste: document.getElementById("aftertaste").value,
+      body: document.getElementById("body").value,
+      colour: document.getElementById("colour").value,
+      flavours,
+      rating: currentRating,
+      learnings: document.getElementById("learnings").value.trim(),
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  function fillForm(entry) {
+    document.getElementById("brewerName").value = entry.brewerName || "";
+    document.getElementById("date").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("coffeeName").value = entry.coffeeName || "";
+    document.getElementById("processing").value = entry.processing || "Washed";
+    document.getElementById("brewMethod").value = entry.brewMethod || "Immersion";
+    document.getElementById("brewDevice").value = entry.brewDevice || "";
+    document.getElementById("filterMedium").value = entry.filterMedium || "Paper";
+    document.getElementById("grindSetting").value = entry.grindSetting || "Medium";
+    document.getElementById("ratio").value = entry.ratio || "";
+    document.getElementById("coffeeDose").value = entry.coffeeDose || "";
+    document.getElementById("temperature").value = entry.temperature || "";
+    document.getElementById("waterDose").value = entry.waterDose || "";
+    document.getElementById("pauseForBloom").value = entry.pauseForBloom || "yes";
+    document.getElementById("bloomWater").value = entry.bloomWater || "";
+    document.getElementById("turbulence").value = entry.turbulence || "Pouring";
+    document.getElementById("pauseDuration").value = entry.pauseDuration || "";
+    document.getElementById("waterDeliveryMethod").value = entry.waterDeliveryMethod || "Continuous";
+    const wd = secondsToTime(entry.waterDeliveryTimeSec);
+    document.getElementById("waterDeliveryMin").value = wd.min;
+    document.getElementById("waterDeliverySec").value = wd.sec;
+    const ct = secondsToTime(entry.totalContactTimeSec);
+    document.getElementById("contactMin").value = ct.min;
+    document.getElementById("contactSec").value = ct.sec;
+    document.getElementById("acidity").value = entry.acidity || "Medium";
+    document.getElementById("aftertaste").value = entry.aftertaste || "Medium";
+    document.getElementById("body").value = entry.body || "Medium";
+    document.getElementById("colour").value = entry.colour || "Medium";
+    document.getElementById("learnings").value = "";
+
+    selectedFlavours = new Set(entry.flavours || []);
+    document.querySelectorAll("#flavour-tags .tag").forEach((tag) => {
+      tag.classList.toggle("selected", selectedFlavours.has(tag.dataset.flavour));
+    });
+    document.getElementById("flavourOther").value = "";
+
+    currentRating = 0;
+    renderRating();
+  }
+
+  function resetForm() {
+    form.reset();
+    entryIdField.value = "";
+    parentIdField.value = "";
+    document.getElementById("date").valueAsDate = new Date();
+    selectedFlavours = new Set();
+    document.querySelectorAll("#flavour-tags .tag").forEach((t) => t.classList.remove("selected"));
+    currentRating = 0;
+    renderRating();
+    formTitle.textContent = "新增 Brew Plan";
+    submitBtn.textContent = "儲存 Brew Plan";
+  }
+
+  document.getElementById("clear-form").addEventListener("click", resetForm);
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const entry = readForm();
+    const idx = entries.findIndex((x) => x.id === entry.id);
+    if (idx >= 0) {
+      entries[idx] = entry;
+    } else {
+      entries.push(entry);
+    }
+    saveEntries(entries);
+    resetForm();
+    renderFilterOptions();
+    renderHistory();
+  });
+
+  // --- Clone / edit / delete from history ---
+  function cloneEntry(id) {
+    const entry = entries.find((x) => x.id === id);
+    if (!entry) return;
+    fillForm(entry);
+    entryIdField.value = "";
+    parentIdField.value = entry.id;
+    formTitle.textContent = `複製配方（來自 ${entry.date}）— 調整後儲存為新紀錄`;
+    submitBtn.textContent = "儲存為新的 Brew Plan";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function editEntry(id) {
+    const entry = entries.find((x) => x.id === id);
+    if (!entry) return;
+    fillForm(entry);
+    entryIdField.value = entry.id;
+    parentIdField.value = entry.parentId || "";
+    document.getElementById("date").value = entry.date;
+    document.getElementById("learnings").value = entry.learnings || "";
+    currentRating = entry.rating || 0;
+    renderRating();
+    formTitle.textContent = `編輯 Brew Plan（${entry.date}）`;
+    submitBtn.textContent = "更新 Brew Plan";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function deleteEntry(id) {
+    if (!confirm("確定要刪除這筆紀錄嗎？")) return;
+    entries = entries.filter((x) => x.id !== id);
+    saveEntries(entries);
+    renderFilterOptions();
+    renderHistory();
+  }
+
+  // --- Filter & history rendering ---
+  function renderFilterOptions() {
+    const current = filterCoffeeSelect.value;
+    const names = Array.from(new Set(entries.map((e) => e.coffeeName).filter(Boolean))).sort();
+    filterCoffeeSelect.innerHTML = '<option value="">全部</option>' +
+      names.map((n) => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join("");
+    if (names.includes(current)) filterCoffeeSelect.value = current;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str ?? "";
+    return div.innerHTML;
+  }
+
+  function fmtTime(sec) {
+    if (sec === null || sec === undefined || isNaN(sec)) return "—";
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${String(s).padStart(2, "0")}`;
+  }
+
+  function stars(n) {
+    n = Number(n) || 0;
+    return "★".repeat(n) + "☆".repeat(5 - n);
+  }
+
+  filterCoffeeSelect.addEventListener("change", renderHistory);
+
+  function renderHistory() {
+    const filter = filterCoffeeSelect.value;
+    let list = entries.slice().sort((a, b) => (a.date < b.date ? 1 : -1));
+    if (filter) list = list.filter((e) => e.coffeeName === filter);
+
+    historyBody.innerHTML = "";
+    emptyState.style.display = list.length ? "none" : "block";
+    document.getElementById("history-table").style.display = list.length ? "table" : "none";
+
+    let bestId = null;
+    if (filter && list.length > 1) {
+      const withRating = list.filter((e) => e.rating > 0);
+      if (withRating.length) {
+        bestId = withRating.reduce((best, e) => (e.rating > best.rating ? e : best)).id;
+      }
+    }
+
+    if (bestId) {
+      const best = list.find((e) => e.id === bestId);
+      bestBanner.classList.add("show");
+      bestBanner.textContent = `目前 "${filter}" 最佳紀錄：${best.date}，評分 ${best.rating}★，粉水比 1:${best.ratio || "?"}，水溫 ${best.temperature || "?"}°C，研磨 ${best.grindSetting}。建議以此為基準微調。`;
+    } else {
+      bestBanner.classList.remove("show");
+    }
+
+    list.forEach((e) => {
+      const tr = document.createElement("tr");
+      if (e.id === bestId) tr.classList.add("best");
+
+      const recipeStr = `1:${e.ratio || "?"} · ${e.coffeeDose || "?"}g · ${e.temperature || "?"}°C`;
+      const timeStr = `Bloom ${e.pauseDuration || "?"}s / Contact ${fmtTime(e.totalContactTimeSec)}`;
+      const sensoryStr = `${e.acidity || ""} acidity, ${e.body || ""} body${e.flavours && e.flavours.length ? ", " + e.flavours.join("/") : ""}`;
+
+      tr.innerHTML = `
+        <td>${escapeHtml(e.date)}</td>
+        <td>${escapeHtml(e.coffeeName)}${e.id === bestId ? '<span class="badge">Best</span>' : ""}</td>
+        <td>${escapeHtml(recipeStr)}</td>
+        <td>${escapeHtml(timeStr)}</td>
+        <td>${escapeHtml(sensoryStr)}</td>
+        <td><span class="stars-mini">${stars(e.rating)}</span></td>
+        <td>${escapeHtml((e.learnings || "").slice(0, 80))}${(e.learnings || "").length > 80 ? "…" : ""}</td>
+        <td>
+          <div class="row-actions">
+            <button type="button" data-action="clone" data-id="${e.id}">複製配方</button>
+            <button type="button" data-action="edit" data-id="${e.id}">編輯</button>
+            <button type="button" data-action="delete" data-id="${e.id}">刪除</button>
+          </div>
+        </td>
+      `;
+      historyBody.appendChild(tr);
+    });
+  }
+
+  historyBody.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const id = btn.dataset.id;
+    if (btn.dataset.action === "clone") cloneEntry(id);
+    if (btn.dataset.action === "edit") editEntry(id);
+    if (btn.dataset.action === "delete") deleteEntry(id);
+  });
+
+  // --- Export / Import ---
+  document.getElementById("export-btn").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(entries, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `brew-plan-log-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById("import-btn").addEventListener("click", () => {
+    document.getElementById("import-input").click();
+  });
+  document.getElementById("import-input").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result);
+        if (!Array.isArray(imported)) throw new Error("Invalid format");
+        const existingIds = new Set(entries.map((x) => x.id));
+        const merged = entries.concat(imported.filter((x) => x.id && !existingIds.has(x.id)));
+        entries = merged;
+        saveEntries(entries);
+        renderFilterOptions();
+        renderHistory();
+        alert(`已匯入 ${imported.length} 筆紀錄（已略過重複 id）。`);
+      } catch (err) {
+        alert("匯入失敗：檔案格式不正確。");
+      }
+      e.target.value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  // --- Init ---
+  renderRating();
+  renderFilterOptions();
+  renderHistory();
+})();
+</script>
+</body>
+</html>

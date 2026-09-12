@@ -264,6 +264,7 @@
               <option>Coarse</option>
               <option>Other</option>
             </select>
+            <input id="grindSettingOther" type="text" placeholder="請輸入研磨設定" style="margin-top:0.5rem; display:none;" />
           </div>
         </div>
       </fieldset>
@@ -311,6 +312,7 @@
               <option>Stirring</option>
               <option>Other</option>
             </select>
+            <input id="turbulenceOther" type="text" placeholder="請輸入攪動方式" style="margin-top:0.5rem; display:none;" />
           </div>
           <div>
             <label for="pauseDuration">Duration of Pause (sec)</label>
@@ -507,14 +509,46 @@
     }
   });
 
-  // --- Processing: custom "Other" input ---
-  const processingSelect = document.getElementById("processing");
-  const processingOtherInput = document.getElementById("processingOther");
-  const knownProcessing = ["Washed", "Natural", "Pulped Natural"];
-  function toggleProcessingOther() {
-    processingOtherInput.style.display = processingSelect.value === "Other" ? "block" : "none";
+  // --- Select fields with a custom "Other" text input ---
+  const otherFields = {
+    processing: {
+      select: document.getElementById("processing"),
+      other: document.getElementById("processingOther"),
+      known: ["Washed", "Natural", "Pulped Natural"],
+      default: "Washed",
+    },
+    grindSetting: {
+      select: document.getElementById("grindSetting"),
+      other: document.getElementById("grindSettingOther"),
+      known: ["Fine", "Medium", "Coarse"],
+      default: "Medium",
+    },
+    turbulence: {
+      select: document.getElementById("turbulence"),
+      other: document.getElementById("turbulenceOther"),
+      known: ["Pouring", "Stirring"],
+      default: "Pouring",
+    },
+  };
+  function toggleOtherInput(field) {
+    field.other.style.display = field.select.value === "Other" ? "block" : "none";
   }
-  processingSelect.addEventListener("change", toggleProcessingOther);
+  function getOtherFieldValue(field) {
+    return field.select.value === "Other" ? field.other.value.trim() || "Other" : field.select.value;
+  }
+  function setOtherFieldValue(field, value) {
+    if (value && !field.known.includes(value)) {
+      field.select.value = "Other";
+      field.other.value = value;
+    } else {
+      field.select.value = value || field.default;
+      field.other.value = "";
+    }
+    toggleOtherInput(field);
+  }
+  Object.values(otherFields).forEach((field) => {
+    field.select.addEventListener("change", () => toggleOtherInput(field));
+  });
 
   // --- Rating stars ---
   const ratingEl = document.getElementById("rating");
@@ -553,21 +587,18 @@
       brewerName: document.getElementById("brewerName").value.trim(),
       date: document.getElementById("date").value,
       coffeeName: document.getElementById("coffeeName").value.trim(),
-      processing:
-        processingSelect.value === "Other"
-          ? processingOtherInput.value.trim() || "Other"
-          : processingSelect.value,
+      processing: getOtherFieldValue(otherFields.processing),
       brewMethod: document.getElementById("brewMethod").value,
       brewDevice: document.getElementById("brewDevice").value.trim(),
       filterMedium: document.getElementById("filterMedium").value,
-      grindSetting: document.getElementById("grindSetting").value,
+      grindSetting: getOtherFieldValue(otherFields.grindSetting),
       ratio: document.getElementById("ratio").value,
       coffeeDose: document.getElementById("coffeeDose").value,
       temperature: document.getElementById("temperature").value,
       waterDose: document.getElementById("waterDose").value,
       pauseForBloom: document.getElementById("pauseForBloom").value,
       bloomWater: document.getElementById("bloomWater").value,
-      turbulence: document.getElementById("turbulence").value,
+      turbulence: getOtherFieldValue(otherFields.turbulence),
       pauseDuration: document.getElementById("pauseDuration").value,
       waterDeliveryMethod: document.getElementById("waterDeliveryMethod").value,
       waterDeliveryTimeSec: timeToSeconds(
@@ -593,25 +624,18 @@
     document.getElementById("brewerName").value = entry.brewerName || "";
     document.getElementById("date").value = new Date().toISOString().slice(0, 10);
     document.getElementById("coffeeName").value = entry.coffeeName || "";
-    if (entry.processing && !knownProcessing.includes(entry.processing)) {
-      processingSelect.value = "Other";
-      processingOtherInput.value = entry.processing;
-    } else {
-      processingSelect.value = entry.processing || "Washed";
-      processingOtherInput.value = "";
-    }
-    toggleProcessingOther();
+    setOtherFieldValue(otherFields.processing, entry.processing);
     document.getElementById("brewMethod").value = entry.brewMethod || "Immersion";
     document.getElementById("brewDevice").value = entry.brewDevice || "";
     document.getElementById("filterMedium").value = entry.filterMedium || "Paper";
-    document.getElementById("grindSetting").value = entry.grindSetting || "Medium";
+    setOtherFieldValue(otherFields.grindSetting, entry.grindSetting);
     document.getElementById("ratio").value = entry.ratio || "";
     document.getElementById("coffeeDose").value = entry.coffeeDose || "";
     document.getElementById("temperature").value = entry.temperature || "";
     document.getElementById("waterDose").value = entry.waterDose || "";
     document.getElementById("pauseForBloom").value = entry.pauseForBloom || "yes";
     document.getElementById("bloomWater").value = entry.bloomWater || "";
-    document.getElementById("turbulence").value = entry.turbulence || "Pouring";
+    setOtherFieldValue(otherFields.turbulence, entry.turbulence);
     document.getElementById("pauseDuration").value = entry.pauseDuration || "";
     document.getElementById("waterDeliveryMethod").value = entry.waterDeliveryMethod || "Continuous";
     const wd = secondsToTime(entry.waterDeliveryTimeSec);
@@ -641,7 +665,7 @@
     entryIdField.value = "";
     parentIdField.value = "";
     document.getElementById("date").valueAsDate = new Date();
-    toggleProcessingOther();
+    Object.values(otherFields).forEach(toggleOtherInput);
     selectedFlavours = new Set();
     document.querySelectorAll("#flavour-tags .tag").forEach((t) => t.classList.remove("selected"));
     currentRating = 0;

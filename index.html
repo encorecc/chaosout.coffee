@@ -6,16 +6,17 @@
 <title>Brew Plan Log</title>
 <style>
   :root {
-    --bg: #f7f4ef;
+    --bg: #fefae0;
     --panel: #ffffff;
-    --ink: #2b2420;
-    --muted: #7a6f63;
-    --border: #e2d9cd;
-    --accent: #8a5a34;
-    --accent-ink: #ffffff;
-    --good: #4c7a4c;
-    --warn: #b3762c;
-    --chip-bg: #f0e6d8;
+    --ink: #283618;
+    --muted: #74805f;
+    --border: #e7e0b8;
+    --accent: #557235;
+    --accent-ink: #fefae0;
+    --good: #557235;
+    --warn: #a9731f;
+    --chip-bg: #f5ecd2;
+    --tan: #dda15e;
   }
   * { box-sizing: border-box; }
   body {
@@ -83,7 +84,7 @@
     border: 1px solid var(--border);
     border-radius: 6px;
     font-size: 0.9rem;
-    background: #fffdfa;
+    background: #fffef6;
     color: var(--ink);
     font-family: inherit;
   }
@@ -119,7 +120,7 @@
     font-size: 1.25rem;
   }
   .rating span { cursor: pointer; color: var(--border); }
-  .rating span.on { color: var(--accent); }
+  .rating span.on { color: var(--tan); }
 
   .actions {
     display: flex;
@@ -156,8 +157,8 @@
   .toolbar > div { flex: 1; min-width: 160px; }
 
   .best-banner {
-    background: #eef4ea;
-    border: 1px solid #c9dcbe;
+    background: #eef3e0;
+    border: 1px solid #cbdba8;
     color: var(--good);
     padding: 0.6rem 0.9rem;
     border-radius: 8px;
@@ -170,10 +171,10 @@
   table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
   th, td { text-align: left; padding: 0.5rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
   th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; }
-  tr.best td { background: #eef4ea; }
+  tr.best td { background: #eef3e0; }
   .row-actions { display: flex; gap: 0.35rem; flex-wrap: wrap; }
   .row-actions button { padding: 0.3rem 0.55rem; font-size: 0.78rem; }
-  .stars-mini { color: var(--accent); letter-spacing: 1px; }
+  .stars-mini { color: var(--tan); letter-spacing: 1px; }
   .empty-state { color: var(--muted); text-align: center; padding: 2rem; }
   .badge {
     display: inline-block;

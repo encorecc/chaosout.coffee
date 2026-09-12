@@ -114,8 +114,9 @@
 
   .rating {
     display: flex;
-    gap: 0.25rem;
-    font-size: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.15rem;
+    font-size: 1.25rem;
   }
   .rating span { cursor: pointer; color: var(--border); }
   .rating span.on { color: var(--accent); }
@@ -389,9 +390,9 @@
           <input id="flavourOther" type="text" placeholder="Other flavours (comma separated)" style="margin-top:0.5rem;" />
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Overall Rating</label>
+          <label>Overall Rating (1-10)</label>
           <div class="rating" id="rating">
-            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span><span data-v="6">★</span><span data-v="7">★</span><span data-v="8">★</span><span data-v="9">★</span><span data-v="10">★</span>
           </div>
         </div>
       </fieldset>
@@ -703,7 +704,7 @@
 
   function stars(n) {
     n = Number(n) || 0;
-    return "★".repeat(n) + "☆".repeat(5 - n);
+    return "★".repeat(n) + "☆".repeat(10 - n);
   }
 
   filterCoffeeSelect.addEventListener("change", renderHistory);
@@ -728,7 +729,7 @@
     if (bestId) {
       const best = list.find((e) => e.id === bestId);
       bestBanner.classList.add("show");
-      bestBanner.textContent = `目前 "${filter}" 最佳紀錄：${best.date}，評分 ${best.rating}★，粉水比 1:${best.ratio || "?"}，水溫 ${best.temperature || "?"}°C，研磨 ${best.grindSetting}。建議以此為基準微調。`;
+      bestBanner.textContent = `目前 "${filter}" 最佳紀錄：${best.date}，評分 ${best.rating}/10，粉水比 1:${best.ratio || "?"}，水溫 ${best.temperature || "?"}°C，研磨 ${best.grindSetting}。建議以此為基準微調。`;
     } else {
       bestBanner.classList.remove("show");
     }

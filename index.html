@@ -227,6 +227,7 @@
               <option>Pulped Natural</option>
               <option>Other</option>
             </select>
+            <input id="processingOther" type="text" placeholder="請輸入處理法" style="margin-top:0.5rem; display:none;" />
           </div>
         </div>
       </fieldset>
@@ -506,6 +507,15 @@
     }
   });
 
+  // --- Processing: custom "Other" input ---
+  const processingSelect = document.getElementById("processing");
+  const processingOtherInput = document.getElementById("processingOther");
+  const knownProcessing = ["Washed", "Natural", "Pulped Natural"];
+  function toggleProcessingOther() {
+    processingOtherInput.style.display = processingSelect.value === "Other" ? "block" : "none";
+  }
+  processingSelect.addEventListener("change", toggleProcessingOther);
+
   // --- Rating stars ---
   const ratingEl = document.getElementById("rating");
   ratingEl.addEventListener("click", (e) => {
@@ -543,7 +553,10 @@
       brewerName: document.getElementById("brewerName").value.trim(),
       date: document.getElementById("date").value,
       coffeeName: document.getElementById("coffeeName").value.trim(),
-      processing: document.getElementById("processing").value,
+      processing:
+        processingSelect.value === "Other"
+          ? processingOtherInput.value.trim() || "Other"
+          : processingSelect.value,
       brewMethod: document.getElementById("brewMethod").value,
       brewDevice: document.getElementById("brewDevice").value.trim(),
       filterMedium: document.getElementById("filterMedium").value,
@@ -580,7 +593,14 @@
     document.getElementById("brewerName").value = entry.brewerName || "";
     document.getElementById("date").value = new Date().toISOString().slice(0, 10);
     document.getElementById("coffeeName").value = entry.coffeeName || "";
-    document.getElementById("processing").value = entry.processing || "Washed";
+    if (entry.processing && !knownProcessing.includes(entry.processing)) {
+      processingSelect.value = "Other";
+      processingOtherInput.value = entry.processing;
+    } else {
+      processingSelect.value = entry.processing || "Washed";
+      processingOtherInput.value = "";
+    }
+    toggleProcessingOther();
     document.getElementById("brewMethod").value = entry.brewMethod || "Immersion";
     document.getElementById("brewDevice").value = entry.brewDevice || "";
     document.getElementById("filterMedium").value = entry.filterMedium || "Paper";
@@ -621,6 +641,7 @@
     entryIdField.value = "";
     parentIdField.value = "";
     document.getElementById("date").valueAsDate = new Date();
+    toggleProcessingOther();
     selectedFlavours = new Set();
     document.querySelectorAll("#flavour-tags .tag").forEach((t) => t.classList.remove("selected"));
     currentRating = 0;

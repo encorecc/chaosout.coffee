@@ -227,6 +227,10 @@
             <input id="date" type="date" required />
           </div>
           <div>
+            <label for="coffeeBrand">Brand & Series</label>
+            <input id="coffeeBrand" type="text" placeholder="e.g. Chaos Out / Signature Blend" />
+          </div>
+          <div>
             <label for="coffeeName">Coffee (origin / variety)</label>
             <input id="coffeeName" type="text" required placeholder="e.g. Ethiopia Yirgacheffe" />
           </div>
@@ -597,6 +601,7 @@
       parentId: parentIdField.value || null,
       brewerName: document.getElementById("brewerName").value.trim(),
       date: document.getElementById("date").value,
+      coffeeBrand: document.getElementById("coffeeBrand").value.trim(),
       coffeeName: document.getElementById("coffeeName").value.trim(),
       processing: getOtherFieldValue(otherFields.processing),
       brewMethod: document.getElementById("brewMethod").value,
@@ -634,6 +639,7 @@
   function fillForm(entry) {
     document.getElementById("brewerName").value = entry.brewerName || "";
     document.getElementById("date").value = new Date().toISOString().slice(0, 10);
+    document.getElementById("coffeeBrand").value = entry.coffeeBrand || "";
     document.getElementById("coffeeName").value = entry.coffeeName || "";
     setOtherFieldValue(otherFields.processing, entry.processing);
     document.getElementById("brewMethod").value = entry.brewMethod || "Immersion";
@@ -798,10 +804,11 @@
       const recipeStr = `1:${e.ratio || "?"} · ${e.coffeeDose || "?"}g · ${e.temperature || "?"}°C`;
       const timeStr = `Bloom ${e.pauseDuration || "?"}s / Contact ${fmtTime(e.totalContactTimeSec)}`;
       const sensoryStr = `${e.acidity || ""} acidity, ${e.body || ""} body${e.flavours && e.flavours.length ? ", " + e.flavours.join("/") : ""}`;
+      const coffeeLabel = e.coffeeBrand ? `${e.coffeeBrand} · ${e.coffeeName}` : e.coffeeName;
 
       tr.innerHTML = `
         <td>${escapeHtml(e.date)}</td>
-        <td>${escapeHtml(e.coffeeName)}${e.id === bestId ? '<span class="badge">Best</span>' : ""}</td>
+        <td>${escapeHtml(coffeeLabel)}${e.id === bestId ? '<span class="badge">Best</span>' : ""}</td>
         <td>${escapeHtml(recipeStr)}</td>
         <td>${escapeHtml(timeStr)}</td>
         <td>${escapeHtml(sensoryStr)}</td>

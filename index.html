@@ -367,8 +367,24 @@
         <legend>Sensory Assessment</legend>
         <div class="grid">
           <div>
+            <label for="fragrance">Fragrance (Dry Aroma)</label>
+            <select id="fragrance">
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </div>
+          <div>
             <label for="acidity">Acidity</label>
             <select id="acidity">
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </div>
+          <div>
+            <label for="sweetness">Sweetness</label>
+            <select id="sweetness">
               <option>Low</option>
               <option>Medium</option>
               <option>High</option>
@@ -391,12 +407,30 @@
             </select>
           </div>
           <div>
+            <label for="mouthfeel">Mouthfeel Intensity</label>
+            <select id="mouthfeel">
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </div>
+          <div>
             <label for="colour">Colour</label>
             <select id="colour">
               <option>Light</option>
               <option>Medium</option>
               <option>Dark</option>
             </select>
+          </div>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <label>Mouthfeel Texture</label>
+          <div class="tags" id="mouthfeel-tags">
+            <span class="tag" data-mouthfeel="Rough">Rough</span>
+            <span class="tag" data-mouthfeel="Smooth">Smooth</span>
+            <span class="tag" data-mouthfeel="Metallic">Metallic</span>
+            <span class="tag" data-mouthfeel="Oily">Oily</span>
+            <span class="tag" data-mouthfeel="Mouth-Drying">Mouth-Drying</span>
           </div>
         </div>
         <div style="margin-top:0.75rem;">
@@ -499,6 +533,7 @@
 
   let entries = loadEntries();
   let selectedFlavours = new Set();
+  let selectedMouthfeel = new Set();
   let currentRating = 0;
 
   const form = document.getElementById("brew-form");
@@ -523,6 +558,20 @@
       tag.classList.remove("selected");
     } else {
       selectedFlavours.add(f);
+      tag.classList.add("selected");
+    }
+  });
+
+  // --- Mouthfeel texture tags ---
+  document.getElementById("mouthfeel-tags").addEventListener("click", (e) => {
+    const tag = e.target.closest(".tag");
+    if (!tag) return;
+    const m = tag.dataset.mouthfeel;
+    if (selectedMouthfeel.has(m)) {
+      selectedMouthfeel.delete(m);
+      tag.classList.remove("selected");
+    } else {
+      selectedMouthfeel.add(m);
       tag.classList.add("selected");
     }
   });
@@ -628,9 +677,13 @@
         document.getElementById("contactMin").value,
         document.getElementById("contactSec").value
       ),
+      fragrance: document.getElementById("fragrance").value,
       acidity: document.getElementById("acidity").value,
+      sweetness: document.getElementById("sweetness").value,
       aftertaste: document.getElementById("aftertaste").value,
       body: document.getElementById("body").value,
+      mouthfeel: document.getElementById("mouthfeel").value,
+      mouthfeelTextures: Array.from(selectedMouthfeel),
       colour: document.getElementById("colour").value,
       flavours,
       rating: currentRating,
@@ -664,9 +717,12 @@
     const ct = secondsToTime(entry.totalContactTimeSec);
     document.getElementById("contactMin").value = ct.min;
     document.getElementById("contactSec").value = ct.sec;
+    document.getElementById("fragrance").value = entry.fragrance || "Medium";
     document.getElementById("acidity").value = entry.acidity || "Medium";
+    document.getElementById("sweetness").value = entry.sweetness || "Medium";
     document.getElementById("aftertaste").value = entry.aftertaste || "Medium";
     document.getElementById("body").value = entry.body || "Medium";
+    document.getElementById("mouthfeel").value = entry.mouthfeel || "Medium";
     document.getElementById("colour").value = entry.colour || "Medium";
     document.getElementById("learnings").value = "";
 
@@ -675,6 +731,11 @@
       tag.classList.toggle("selected", selectedFlavours.has(tag.dataset.flavour));
     });
     document.getElementById("flavourOther").value = "";
+
+    selectedMouthfeel = new Set(entry.mouthfeelTextures || []);
+    document.querySelectorAll("#mouthfeel-tags .tag").forEach((tag) => {
+      tag.classList.toggle("selected", selectedMouthfeel.has(tag.dataset.mouthfeel));
+    });
 
     currentRating = 0;
     renderRating();
@@ -688,6 +749,8 @@
     Object.values(otherFields).forEach(toggleOtherInput);
     selectedFlavours = new Set();
     document.querySelectorAll("#flavour-tags .tag").forEach((t) => t.classList.remove("selected"));
+    selectedMouthfeel = new Set();
+    document.querySelectorAll("#mouthfeel-tags .tag").forEach((t) => t.classList.remove("selected"));
     currentRating = 0;
     renderRating();
     formTitle.textContent = "新增 Brew Plan";
@@ -806,7 +869,7 @@
 
       const recipeStr = `1:${e.ratio || "?"} · ${e.coffeeDose || "?"}g · ${e.temperature || "?"}°C`;
       const timeStr = `Bloom ${e.pauseDuration || "?"}s / Contact ${fmtTime(e.totalContactTimeSec)}`;
-      const sensoryStr = `${e.acidity || ""} acidity, ${e.body || ""} body${e.flavours && e.flavours.length ? ", " + e.flavours.join("/") : ""}`;
+      const sensoryStr = `${e.acidity || ""} acidity, ${e.body || ""} body, ${e.sweetness || ""} sweetness${e.flavours && e.flavours.length ? ", " + e.flavours.join("/") : ""}${e.mouthfeelTextures && e.mouthfeelTextures.length ? ", " + e.mouthfeelTextures.join("/") : ""}`;
       const coffeeLabel = e.coffeeBrand ? `${e.coffeeBrand} · ${e.coffeeName}` : e.coffeeName;
 
       tr.innerHTML = `

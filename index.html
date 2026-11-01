@@ -365,62 +365,60 @@
 
       <fieldset>
         <legend>Sensory Assessment</legend>
-        <div class="grid">
-          <div>
-            <label for="fragrance">Fragrance (Dry Aroma)</label>
-            <select id="fragrance">
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-            </select>
+        <div>
+          <label>Fragrance (Dry Aroma)</label>
+          <div class="tags" id="fragrance-tags">
+            <span class="tag" data-value="Low">Low</span>
+            <span class="tag" data-value="Medium">Medium</span>
+            <span class="tag" data-value="High">High</span>
           </div>
-          <div>
-            <label for="acidity">Acidity</label>
-            <select id="acidity">
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-            </select>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <label>Acidity</label>
+          <div class="tags" id="acidity-tags">
+            <span class="tag" data-value="Low">Low</span>
+            <span class="tag" data-value="Medium">Medium</span>
+            <span class="tag" data-value="High">High</span>
           </div>
-          <div>
-            <label for="sweetness">Sweetness</label>
-            <select id="sweetness">
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-            </select>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <label>Sweetness</label>
+          <div class="tags" id="sweetness-tags">
+            <span class="tag" data-value="Low">Low</span>
+            <span class="tag" data-value="Medium">Medium</span>
+            <span class="tag" data-value="High">High</span>
           </div>
-          <div>
-            <label for="aftertaste">Aftertaste</label>
-            <select id="aftertaste">
-              <option>Short</option>
-              <option>Medium</option>
-              <option>Long</option>
-            </select>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <label>Aftertaste</label>
+          <div class="tags" id="aftertaste-tags">
+            <span class="tag" data-value="Short">Short</span>
+            <span class="tag" data-value="Medium">Medium</span>
+            <span class="tag" data-value="Long">Long</span>
           </div>
-          <div>
-            <label for="body">Body</label>
-            <select id="body">
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-            </select>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <label>Body</label>
+          <div class="tags" id="body-tags">
+            <span class="tag" data-value="Low">Low</span>
+            <span class="tag" data-value="Medium">Medium</span>
+            <span class="tag" data-value="High">High</span>
           </div>
-          <div>
-            <label for="mouthfeel">Mouthfeel Intensity</label>
-            <select id="mouthfeel">
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-            </select>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <label>Mouthfeel Intensity</label>
+          <div class="tags" id="mouthfeel-intensity-tags">
+            <span class="tag" data-value="Low">Low</span>
+            <span class="tag" data-value="Medium">Medium</span>
+            <span class="tag" data-value="High">High</span>
           </div>
-          <div>
-            <label for="colour">Colour</label>
-            <select id="colour">
-              <option>Light</option>
-              <option>Medium</option>
-              <option>Dark</option>
-            </select>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <label>Colour</label>
+          <div class="tags" id="colour-tags">
+            <span class="tag" data-value="Light">Light</span>
+            <span class="tag" data-value="Medium">Medium</span>
+            <span class="tag" data-value="Dark">Dark</span>
           </div>
         </div>
         <div style="margin-top:0.75rem;">
@@ -576,6 +574,47 @@
     }
   });
 
+  // --- Sensory dimension tags (tick multi-select) ---
+  const sensoryGroups = {
+    fragrance: document.getElementById("fragrance-tags"),
+    acidity: document.getElementById("acidity-tags"),
+    sweetness: document.getElementById("sweetness-tags"),
+    aftertaste: document.getElementById("aftertaste-tags"),
+    body: document.getElementById("body-tags"),
+    mouthfeelIntensity: document.getElementById("mouthfeel-intensity-tags"),
+    colour: document.getElementById("colour-tags"),
+  };
+  const sensorySelected = {};
+  Object.entries(sensoryGroups).forEach(([key, container]) => {
+    sensorySelected[key] = new Set();
+    container.addEventListener("click", (e) => {
+      const tag = e.target.closest(".tag");
+      if (!tag) return;
+      const v = tag.dataset.value;
+      const set = sensorySelected[key];
+      if (set.has(v)) {
+        set.delete(v);
+        tag.classList.remove("selected");
+      } else {
+        set.add(v);
+        tag.classList.add("selected");
+      }
+    });
+  });
+  function getSensoryValues(key) {
+    return Array.from(sensorySelected[key]);
+  }
+  function setSensoryValues(key, values) {
+    const list = Array.isArray(values) ? values : values ? [values] : [];
+    sensorySelected[key] = new Set(list);
+    sensoryGroups[key].querySelectorAll(".tag").forEach((tag) => {
+      tag.classList.toggle("selected", sensorySelected[key].has(tag.dataset.value));
+    });
+  }
+  function resetSensoryValues() {
+    Object.keys(sensoryGroups).forEach((key) => setSensoryValues(key, []));
+  }
+
   // --- Select fields with a custom "Other" text input ---
   const otherFields = {
     processing: {
@@ -677,14 +716,14 @@
         document.getElementById("contactMin").value,
         document.getElementById("contactSec").value
       ),
-      fragrance: document.getElementById("fragrance").value,
-      acidity: document.getElementById("acidity").value,
-      sweetness: document.getElementById("sweetness").value,
-      aftertaste: document.getElementById("aftertaste").value,
-      body: document.getElementById("body").value,
-      mouthfeel: document.getElementById("mouthfeel").value,
+      fragrance: getSensoryValues("fragrance"),
+      acidity: getSensoryValues("acidity"),
+      sweetness: getSensoryValues("sweetness"),
+      aftertaste: getSensoryValues("aftertaste"),
+      body: getSensoryValues("body"),
+      mouthfeel: getSensoryValues("mouthfeelIntensity"),
       mouthfeelTextures: Array.from(selectedMouthfeel),
-      colour: document.getElementById("colour").value,
+      colour: getSensoryValues("colour"),
       flavours,
       rating: currentRating,
       learnings: document.getElementById("learnings").value.trim(),
@@ -717,13 +756,13 @@
     const ct = secondsToTime(entry.totalContactTimeSec);
     document.getElementById("contactMin").value = ct.min;
     document.getElementById("contactSec").value = ct.sec;
-    document.getElementById("fragrance").value = entry.fragrance || "Medium";
-    document.getElementById("acidity").value = entry.acidity || "Medium";
-    document.getElementById("sweetness").value = entry.sweetness || "Medium";
-    document.getElementById("aftertaste").value = entry.aftertaste || "Medium";
-    document.getElementById("body").value = entry.body || "Medium";
-    document.getElementById("mouthfeel").value = entry.mouthfeel || "Medium";
-    document.getElementById("colour").value = entry.colour || "Medium";
+    setSensoryValues("fragrance", entry.fragrance);
+    setSensoryValues("acidity", entry.acidity);
+    setSensoryValues("sweetness", entry.sweetness);
+    setSensoryValues("aftertaste", entry.aftertaste);
+    setSensoryValues("body", entry.body);
+    setSensoryValues("mouthfeelIntensity", entry.mouthfeel);
+    setSensoryValues("colour", entry.colour);
     document.getElementById("learnings").value = "";
 
     selectedFlavours = new Set(entry.flavours || []);
@@ -751,6 +790,7 @@
     document.querySelectorAll("#flavour-tags .tag").forEach((t) => t.classList.remove("selected"));
     selectedMouthfeel = new Set();
     document.querySelectorAll("#mouthfeel-tags .tag").forEach((t) => t.classList.remove("selected"));
+    resetSensoryValues();
     currentRating = 0;
     renderRating();
     formTitle.textContent = "新增 Brew Plan";
@@ -831,6 +871,11 @@
     return `${m}:${String(s).padStart(2, "0")}`;
   }
 
+  function fmtMulti(v) {
+    if (!v) return "";
+    return Array.isArray(v) ? v.join("/") : v;
+  }
+
   function stars(n) {
     n = Number(n) || 0;
     return "★".repeat(n) + "☆".repeat(10 - n);
@@ -869,7 +914,7 @@
 
       const recipeStr = `1:${e.ratio || "?"} · ${e.coffeeDose || "?"}g · ${e.temperature || "?"}°C`;
       const timeStr = `Bloom ${e.pauseDuration || "?"}s / Contact ${fmtTime(e.totalContactTimeSec)}`;
-      const sensoryStr = `${e.acidity || ""} acidity, ${e.body || ""} body, ${e.sweetness || ""} sweetness${e.flavours && e.flavours.length ? ", " + e.flavours.join("/") : ""}${e.mouthfeelTextures && e.mouthfeelTextures.length ? ", " + e.mouthfeelTextures.join("/") : ""}`;
+      const sensoryStr = `${fmtMulti(e.acidity)} acidity, ${fmtMulti(e.body)} body, ${fmtMulti(e.sweetness)} sweetness${e.flavours && e.flavours.length ? ", " + e.flavours.join("/") : ""}${e.mouthfeelTextures && e.mouthfeelTextures.length ? ", " + e.mouthfeelTextures.join("/") : ""}`;
       const coffeeLabel = e.coffeeBrand ? `${e.coffeeBrand} · ${e.coffeeName}` : e.coffeeName;
 
       tr.innerHTML = `

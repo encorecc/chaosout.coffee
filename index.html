@@ -247,6 +247,10 @@
             </select>
             <input id="processingOther" type="text" placeholder="請輸入處理法" style="margin-top:0.5rem; display:none;" />
           </div>
+          <div>
+            <label for="notesAdvertised">Notes Advertised</label>
+            <input id="notesAdvertised" type="text" placeholder="e.g. Blueberry, Floral, Chocolate" />
+          </div>
         </div>
       </fieldset>
 
@@ -257,9 +261,17 @@
             <label for="brewMethod">Method</label>
             <select id="brewMethod">
               <option>Immersion</option>
-              <option>Gravity</option>
+              <option selected>Gravity</option>
               <option>Vacuum</option>
               <option>Boiling</option>
+            </select>
+          </div>
+          <div>
+            <label for="filterMedium">Filter Medium</label>
+            <select id="filterMedium">
+              <option selected>Paper</option>
+              <option>Cloth</option>
+              <option>Sieve (Metal)</option>
             </select>
           </div>
           <div>
@@ -267,22 +279,12 @@
             <input id="brewDevice" type="text" placeholder="e.g. V60, AeroPress" />
           </div>
           <div>
-            <label for="filterMedium">Filter Medium</label>
-            <select id="filterMedium">
-              <option>Paper</option>
-              <option>Cloth</option>
-              <option>Sieve (Metal)</option>
-            </select>
+            <label for="grinder">Grinder</label>
+            <input id="grinder" type="text" placeholder="e.g. Comandante C40" />
           </div>
           <div>
             <label for="grindSetting">Grind Setting</label>
-            <select id="grindSetting">
-              <option>Fine</option>
-              <option>Medium</option>
-              <option>Coarse</option>
-              <option>Other</option>
-            </select>
-            <input id="grindSettingOther" type="text" placeholder="請輸入研磨設定" style="margin-top:0.5rem; display:none;" />
+            <input id="grindSetting" type="text" placeholder="e.g. 7.5 clicks" />
           </div>
         </div>
       </fieldset>
@@ -313,13 +315,6 @@
         <legend>Water Cycle</legend>
         <div class="grid">
           <div>
-            <label for="pauseForBloom">Pause for Bloom</label>
-            <select id="pauseForBloom">
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
-          </div>
-          <div>
             <label for="bloomWater">Quantity of Water for Wetting (g)</label>
             <input id="bloomWater" type="number" step="0.1" min="0" />
           </div>
@@ -333,16 +328,8 @@
             <input id="turbulenceOther" type="text" placeholder="請輸入攪動方式" style="margin-top:0.5rem; display:none;" />
           </div>
           <div>
-            <label for="pauseDuration">Duration of Pause (sec)</label>
+            <label for="pauseDuration">Duration of Bloom (sec)</label>
             <input id="pauseDuration" type="number" step="1" min="0" />
-          </div>
-          <div>
-            <label for="waterDeliveryMethod">Water Delivery Method</label>
-            <select id="waterDeliveryMethod">
-              <option>Continuous</option>
-              <option>Pulsed</option>
-              <option>Coffee added to water</option>
-            </select>
           </div>
           <div>
             <label for="waterDeliveryTime">Water Delivery Time</label>
@@ -623,12 +610,6 @@
       known: ["Washed", "Natural", "Pulped Natural"],
       default: "Washed",
     },
-    grindSetting: {
-      select: document.getElementById("grindSetting"),
-      other: document.getElementById("grindSettingOther"),
-      known: ["Fine", "Medium", "Coarse"],
-      default: "Medium",
-    },
     turbulence: {
       select: document.getElementById("turbulence"),
       other: document.getElementById("turbulenceOther"),
@@ -695,19 +676,19 @@
       coffeeBrand: document.getElementById("coffeeBrand").value.trim(),
       coffeeName: document.getElementById("coffeeName").value.trim(),
       processing: getOtherFieldValue(otherFields.processing),
+      notesAdvertised: document.getElementById("notesAdvertised").value.trim(),
       brewMethod: document.getElementById("brewMethod").value,
-      brewDevice: document.getElementById("brewDevice").value.trim(),
       filterMedium: document.getElementById("filterMedium").value,
-      grindSetting: getOtherFieldValue(otherFields.grindSetting),
+      brewDevice: document.getElementById("brewDevice").value.trim(),
+      grinder: document.getElementById("grinder").value.trim(),
+      grindSetting: document.getElementById("grindSetting").value.trim(),
       ratio: document.getElementById("ratio").value,
       coffeeDose: document.getElementById("coffeeDose").value,
       temperature: document.getElementById("temperature").value,
       waterDose: document.getElementById("waterDose").value,
-      pauseForBloom: document.getElementById("pauseForBloom").value,
       bloomWater: document.getElementById("bloomWater").value,
       turbulence: getOtherFieldValue(otherFields.turbulence),
       pauseDuration: document.getElementById("pauseDuration").value,
-      waterDeliveryMethod: document.getElementById("waterDeliveryMethod").value,
       waterDeliveryTimeSec: timeToSeconds(
         document.getElementById("waterDeliveryMin").value,
         document.getElementById("waterDeliverySec").value
@@ -737,19 +718,19 @@
     document.getElementById("coffeeBrand").value = entry.coffeeBrand || "";
     document.getElementById("coffeeName").value = entry.coffeeName || "";
     setOtherFieldValue(otherFields.processing, entry.processing);
-    document.getElementById("brewMethod").value = entry.brewMethod || "Immersion";
-    document.getElementById("brewDevice").value = entry.brewDevice || "";
+    document.getElementById("notesAdvertised").value = entry.notesAdvertised || "";
+    document.getElementById("brewMethod").value = entry.brewMethod || "Gravity";
     document.getElementById("filterMedium").value = entry.filterMedium || "Paper";
-    setOtherFieldValue(otherFields.grindSetting, entry.grindSetting);
+    document.getElementById("brewDevice").value = entry.brewDevice || "";
+    document.getElementById("grinder").value = entry.grinder || "";
+    document.getElementById("grindSetting").value = entry.grindSetting || "";
     document.getElementById("ratio").value = entry.ratio || "";
     document.getElementById("coffeeDose").value = entry.coffeeDose || "";
     document.getElementById("temperature").value = entry.temperature || "";
     document.getElementById("waterDose").value = entry.waterDose || "";
-    document.getElementById("pauseForBloom").value = entry.pauseForBloom || "yes";
     document.getElementById("bloomWater").value = entry.bloomWater || "";
     setOtherFieldValue(otherFields.turbulence, entry.turbulence);
     document.getElementById("pauseDuration").value = entry.pauseDuration || "";
-    document.getElementById("waterDeliveryMethod").value = entry.waterDeliveryMethod || "Continuous";
     const wd = secondsToTime(entry.waterDeliveryTimeSec);
     document.getElementById("waterDeliveryMin").value = wd.min;
     document.getElementById("waterDeliverySec").value = wd.sec;

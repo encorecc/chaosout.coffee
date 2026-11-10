@@ -100,6 +100,7 @@
   }
   input::placeholder, textarea::placeholder { color: var(--muted); }
   select option { color: #1c2b54; }
+  input:disabled { opacity: 0.55; cursor: not-allowed; }
   textarea { resize: vertical; min-height: 3.5rem; }
   input[type="date"] { -webkit-appearance: none; appearance: none; }
   .time-pair { display: flex; gap: 0.4rem; align-items: center; }
@@ -606,6 +607,17 @@
   function renumberPours() {
     poursContainer.querySelectorAll(".pour-row").forEach((row, i) => {
       row.querySelector(".pour-index").textContent = `Pour ${i + 1}`;
+      const startMin = row.querySelector(".pour-start-min");
+      const startSec = row.querySelector(".pour-start-sec");
+      if (i === 0) {
+        startMin.value = "0";
+        startSec.value = "0";
+        startMin.disabled = true;
+        startSec.disabled = true;
+      } else {
+        startMin.disabled = false;
+        startSec.disabled = false;
+      }
     });
   }
   function createPourRow() {

@@ -106,6 +106,28 @@
   .time-pair input { width: 4.5rem; }
   .time-pair span { color: var(--muted); font-size: 0.8rem; }
 
+  .pours-list { display: grid; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .pour-row {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem;
+    background: rgba(199, 210, 232, 0.04);
+  }
+  .pour-row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .pour-index {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .pour-remove { padding: 0.15rem 0.55rem; font-size: 0.85rem; line-height: 1.3; }
+
   .tags {
     display: flex;
     flex-wrap: wrap;
@@ -313,38 +335,15 @@
 
       <fieldset>
         <legend>Water Cycle</legend>
-        <div class="grid">
+        <div class="pours-list" id="pours-container"></div>
+        <button type="button" class="ghost" id="add-pour">+ 加一段注水</button>
+        <div class="grid" style="margin-top:0.75rem;">
           <div>
-            <label for="bloomWater">Quantity of Water for Wetting (g)</label>
-            <input id="bloomWater" type="number" step="0.1" min="0" />
-          </div>
-          <div>
-            <label for="turbulence">Turbulence During Bloom</label>
-            <select id="turbulence">
-              <option>Pouring</option>
-              <option>Stirring</option>
-              <option>Other</option>
-            </select>
-            <input id="turbulenceOther" type="text" placeholder="請輸入攪動方式" style="margin-top:0.5rem; display:none;" />
-          </div>
-          <div>
-            <label for="pauseDuration">Duration of Bloom (sec)</label>
-            <input id="pauseDuration" type="number" step="1" min="0" />
-          </div>
-          <div>
-            <label for="waterDeliveryTime">Water Delivery Time</label>
+            <label for="totalBrewTime">Total Brew Time</label>
             <div class="time-pair">
-              <input id="waterDeliveryMin" type="number" min="0" placeholder="min" />
+              <input id="totalBrewMin" type="number" min="0" placeholder="min" />
               <span>:</span>
-              <input id="waterDeliverySec" type="number" min="0" max="59" placeholder="sec" />
-            </div>
-          </div>
-          <div>
-            <label for="totalContactTime">Total Contact Time</label>
-            <div class="time-pair">
-              <input id="contactMin" type="number" min="0" placeholder="min" />
-              <span>:</span>
-              <input id="contactSec" type="number" min="0" max="59" placeholder="sec" />
+              <input id="totalBrewSec" type="number" min="0" max="59" placeholder="sec" />
             </div>
           </div>
         </div>
@@ -479,7 +478,7 @@
             <th>Date</th>
             <th>Coffee</th>
             <th>Recipe (ratio / dose / temp)</th>
-            <th>Bloom / Contact Time</th>
+            <th>Pours / Brew Time</th>
             <th>Sensory</th>
             <th>Rating</th>
             <th>Learnings</th>
@@ -602,6 +601,88 @@
     Object.keys(sensoryGroups).forEach((key) => setSensoryValues(key, []));
   }
 
+  // --- Water Cycle: dynamic pour stages ---
+  const poursContainer = document.getElementById("pours-container");
+  function renumberPours() {
+    poursContainer.querySelectorAll(".pour-row").forEach((row, i) => {
+      row.querySelector(".pour-index").textContent = `Pour ${i + 1}`;
+    });
+  }
+  function createPourRow() {
+    const row = document.createElement("div");
+    row.className = "pour-row";
+    row.innerHTML = `
+      <div class="pour-row-head">
+        <span class="pour-index"></span>
+        <button type="button" class="ghost pour-remove">✕</button>
+      </div>
+      <div class="grid">
+        <div>
+          <label>Start Time</label>
+          <div class="time-pair">
+            <input type="number" min="0" class="pour-start-min" placeholder="min" />
+            <span>:</span>
+            <input type="number" min="0" max="59" class="pour-start-sec" placeholder="sec" />
+          </div>
+        </div>
+        <div>
+          <label>End Time</label>
+          <div class="time-pair">
+            <input type="number" min="0" class="pour-end-min" placeholder="min" />
+            <span>:</span>
+            <input type="number" min="0" max="59" class="pour-end-sec" placeholder="sec" />
+          </div>
+        </div>
+        <div>
+          <label>Water To (cumulative, g)</label>
+          <input type="number" step="0.1" min="0" class="pour-water" />
+        </div>
+        <div>
+          <label>Note (optional)</label>
+          <input type="text" class="pour-note" placeholder="e.g. Open the Switch" />
+        </div>
+      </div>
+    `;
+    row.querySelector(".pour-remove").addEventListener("click", () => {
+      row.remove();
+      renumberPours();
+    });
+    return row;
+  }
+  function addPourRow(data) {
+    const row = createPourRow();
+    if (data) {
+      const st = secondsToTime(data.startSec);
+      const et = secondsToTime(data.endSec);
+      row.querySelector(".pour-start-min").value = st.min;
+      row.querySelector(".pour-start-sec").value = st.sec;
+      row.querySelector(".pour-end-min").value = et.min;
+      row.querySelector(".pour-end-sec").value = et.sec;
+      row.querySelector(".pour-water").value = data.water || "";
+      row.querySelector(".pour-note").value = data.note || "";
+    }
+    poursContainer.appendChild(row);
+    renumberPours();
+    return row;
+  }
+  function readPours() {
+    return Array.from(poursContainer.querySelectorAll(".pour-row"))
+      .map((row) => ({
+        startSec: timeToSeconds(row.querySelector(".pour-start-min").value, row.querySelector(".pour-start-sec").value),
+        endSec: timeToSeconds(row.querySelector(".pour-end-min").value, row.querySelector(".pour-end-sec").value),
+        water: row.querySelector(".pour-water").value,
+        note: row.querySelector(".pour-note").value.trim(),
+      }))
+      .filter((p) => p.water || p.startSec !== null || p.endSec !== null || p.note);
+  }
+  function fillPours(pours) {
+    poursContainer.innerHTML = "";
+    const list = pours && pours.length ? pours : [null];
+    list.forEach((p) => addPourRow(p));
+  }
+  document.getElementById("add-pour").addEventListener("click", () => addPourRow());
+  fillPours([]);
+
   // --- Select fields with a custom "Other" text input ---
   const otherFields = {
     processing: {
@@ -609,12 +690,6 @@
       other: document.getElementById("processingOther"),
       known: ["Washed", "Natural", "Pulped Natural"],
       default: "Washed",
-    },
-    turbulence: {
-      select: document.getElementById("turbulence"),
-      other: document.getElementById("turbulenceOther"),
-      known: ["Pouring", "Stirring"],
-      default: "Pouring",
     },
   };
   function toggleOtherInput(field) {
@@ -686,16 +761,10 @@
       coffeeDose: document.getElementById("coffeeDose").value,
       temperature: document.getElementById("temperature").value,
       waterDose: document.getElementById("waterDose").value,
-      bloomWater: document.getElementById("bloomWater").value,
-      turbulence: getOtherFieldValue(otherFields.turbulence),
-      pauseDuration: document.getElementById("pauseDuration").value,
-      waterDeliveryTimeSec: timeToSeconds(
-        document.getElementById("waterDeliveryMin").value,
-        document.getElementById("waterDeliverySec").value
-      ),
-      totalContactTimeSec: timeToSeconds(
-        document.getElementById("contactMin").value,
-        document.getElementById("contactSec").value
+      pours: readPours(),
+      totalBrewTimeSec: timeToSeconds(
+        document.getElementById("totalBrewMin").value,
+        document.getElementById("totalBrewSec").value
       ),
       fragrance: getSensoryValues("fragrance"),
       acidity: getSensoryValues("acidity"),
@@ -728,15 +797,10 @@
     document.getElementById("coffeeDose").value = entry.coffeeDose || "";
     document.getElementById("temperature").value = entry.temperature || "";
     document.getElementById("waterDose").value = entry.waterDose || "";
-    document.getElementById("bloomWater").value = entry.bloomWater || "";
-    setOtherFieldValue(otherFields.turbulence, entry.turbulence);
-    document.getElementById("pauseDuration").value = entry.pauseDuration || "";
-    const wd = secondsToTime(entry.waterDeliveryTimeSec);
-    document.getElementById("waterDeliveryMin").value = wd.min;
-    document.getElementById("waterDeliverySec").value = wd.sec;
-    const ct = secondsToTime(entry.totalContactTimeSec);
-    document.getElementById("contactMin").value = ct.min;
-    document.getElementById("contactSec").value = ct.sec;
+    fillPours(entry.pours);
+    const tb = secondsToTime(entry.totalBrewTimeSec);
+    document.getElementById("totalBrewMin").value = tb.min;
+    document.getElementById("totalBrewSec").value = tb.sec;
     setSensoryValues("fragrance", entry.fragrance);
     setSensoryValues("acidity", entry.acidity);
     setSensoryValues("sweetness", entry.sweetness);
@@ -772,6 +836,7 @@
     selectedMouthfeel = new Set();
     document.querySelectorAll("#mouthfeel-tags .tag").forEach((t) => t.classList.remove("selected"));
     resetSensoryValues();
+    fillPours([]);
     currentRating = 0;
     renderRating();
     formTitle.textContent = "新增 Brew Plan";
@@ -894,7 +959,9 @@
       if (e.id === bestId) tr.classList.add("best");
 
       const recipeStr = `1:${e.ratio || "?"} · ${e.coffeeDose || "?"}g · ${e.temperature || "?"}°C`;
-      const timeStr = `Bloom ${e.pauseDuration || "?"}s / Contact ${fmtTime(e.totalContactTimeSec)}`;
+      const poursCount = (e.pours && e.pours.length) || 0;
+      const finalWater = poursCount ? e.pours[poursCount - 1].water : null;
+      const timeStr = `${poursCount} pour${poursCount === 1 ? "" : "s"}${finalWater ? " · " + finalWater + "g" : ""} · ${fmtTime(e.totalBrewTimeSec)}`;
       const sensoryStr = `${fmtMulti(e.acidity)} acidity, ${fmtMulti(e.body)} body, ${fmtMulti(e.sweetness)} sweetness${e.flavours && e.flavours.length ? ", " + e.flavours.join("/") : ""}${e.mouthfeelTextures && e.mouthfeelTextures.length ? ", " + e.mouthfeelTextures.join("/") : ""}`;
       const coffeeLabel = e.coffeeBrand ? `${e.coffeeBrand} · ${e.coffeeName}` : e.coffeeName;
 

@@ -149,6 +149,31 @@
     border-color: var(--accent);
   }
 
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .slider-row input[type="range"] {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    accent-color: var(--accent);
+  }
+  .slider-row input[type="range"].unset { opacity: 0.4; }
+  .slider-val {
+    width: 2rem;
+    text-align: right;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .slider-scale {
+    display: flex;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.72rem;
+    margin-right: 2.75rem;
+  }
   .rating {
     display: flex;
     flex-wrap: wrap;
@@ -353,85 +378,57 @@
       <fieldset>
         <legend>Sensory Assessment</legend>
         <div>
-          <label>Fragrance (Dry Aroma)</label>
-          <div class="tags" id="fragrance-tags">
-            <span class="tag" data-value="Low">Low</span>
-            <span class="tag" data-value="Medium">Medium</span>
-            <span class="tag" data-value="High">High</span>
-          </div>
+          <label>Fragrance</label>
+          <div class="tags flavor-tags" id="fragrance-tags"></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Acidity</label>
-          <div class="tags" id="acidity-tags">
-            <span class="tag" data-value="Low">Low</span>
-            <span class="tag" data-value="Medium">Medium</span>
-            <span class="tag" data-value="High">High</span>
-          </div>
+          <label>Aroma</label>
+          <div class="tags flavor-tags" id="aroma-tags"></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Sweetness</label>
-          <div class="tags" id="sweetness-tags">
-            <span class="tag" data-value="Low">Low</span>
-            <span class="tag" data-value="Medium">Medium</span>
-            <span class="tag" data-value="High">High</span>
-          </div>
+          <label>Flavor</label>
+          <div class="tags flavor-tags" id="flavor-tags"></div>
         </div>
         <div style="margin-top:0.75rem;">
           <label>Aftertaste</label>
-          <div class="tags" id="aftertaste-tags">
-            <span class="tag" data-value="Short">Short</span>
-            <span class="tag" data-value="Medium">Medium</span>
-            <span class="tag" data-value="Long">Long</span>
-          </div>
+          <div class="tags flavor-tags" id="aftertaste-tags"></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Body</label>
-          <div class="tags" id="body-tags">
-            <span class="tag" data-value="Low">Low</span>
-            <span class="tag" data-value="Medium">Medium</span>
-            <span class="tag" data-value="High">High</span>
+          <label for="acidity">Acidity (1-15)</label>
+          <div class="slider-row">
+            <input id="acidity" class="sensory-slider unset" type="range" min="1" max="15" step="1" value="8" />
+            <span class="slider-val" id="acidity-val">—</span>
           </div>
+          <div class="slider-scale"><span>1</span><span>5</span><span>10</span><span>15</span></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Mouthfeel Intensity</label>
-          <div class="tags" id="mouthfeel-intensity-tags">
-            <span class="tag" data-value="Low">Low</span>
-            <span class="tag" data-value="Medium">Medium</span>
-            <span class="tag" data-value="High">High</span>
+          <label for="body">Body (1-15)</label>
+          <div class="slider-row">
+            <input id="body" class="sensory-slider unset" type="range" min="1" max="15" step="1" value="8" />
+            <span class="slider-val" id="body-val">—</span>
           </div>
+          <div class="slider-scale"><span>1</span><span>5</span><span>10</span><span>15</span></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Colour</label>
-          <div class="tags" id="colour-tags">
-            <span class="tag" data-value="Light">Light</span>
-            <span class="tag" data-value="Medium">Medium</span>
-            <span class="tag" data-value="Dark">Dark</span>
+          <label for="sweetness">Sweetness (1-15)</label>
+          <div class="slider-row">
+            <input id="sweetness" class="sensory-slider unset" type="range" min="1" max="15" step="1" value="8" />
+            <span class="slider-val" id="sweetness-val">—</span>
           </div>
+          <div class="slider-scale"><span>1</span><span>5</span><span>10</span><span>15</span></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Mouthfeel Texture</label>
+          <label>Mouthfeel</label>
           <div class="tags" id="mouthfeel-tags">
-            <span class="tag" data-mouthfeel="Rough">Rough</span>
-            <span class="tag" data-mouthfeel="Smooth">Smooth</span>
-            <span class="tag" data-mouthfeel="Metallic">Metallic</span>
-            <span class="tag" data-mouthfeel="Oily">Oily</span>
-            <span class="tag" data-mouthfeel="Mouth-Drying">Mouth-Drying</span>
+            <span class="tag" data-value="Rough">Rough</span>
+            <span class="tag" data-value="Smooth">Smooth</span>
+            <span class="tag" data-value="Metallic">Metallic</span>
+            <span class="tag" data-value="Oily">Oily</span>
+            <span class="tag" data-value="Mouth-Drying">Mouth-Drying</span>
           </div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Aroma / Flavour</label>
-          <div class="tags" id="flavour-tags">
-            <span class="tag" data-flavour="Floral">Floral</span>
-            <span class="tag" data-flavour="Nutty">Nutty</span>
-            <span class="tag" data-flavour="Earthy">Earthy</span>
-            <span class="tag" data-flavour="Tea-like">Tea-like</span>
-            <span class="tag" data-flavour="Chocolatey">Chocolatey</span>
-            <span class="tag" data-flavour="Caramel">Caramel</span>
-          </div>
-          <input id="flavourOther" type="text" placeholder="Other flavours (comma separated)" style="margin-top:0.5rem;" />
-        </div>
-        <div style="margin-top:0.75rem;">
-          <label>Overall Rating (1-10)</label>
+          <label>Overall (1-10)</label>
           <div class="rating" id="rating">
             <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span><span data-v="6">★</span><span data-v="7">★</span><span data-v="8">★</span><span data-v="9">★</span><span data-v="10">★</span>
           </div>
@@ -517,8 +514,7 @@
   }
 
   let entries = loadEntries();
-  let selectedFlavours = new Set();
-  let selectedMouthfeel = new Set();
+  let selectedMouthfeel = null;
   let currentRating = 0;
 
   const form = document.getElementById("brew-form");
@@ -533,73 +529,87 @@
 
   document.getElementById("date").valueAsDate = new Date();
 
-  // --- Flavour tags ---
-  document.getElementById("flavour-tags").addEventListener("click", (e) => {
+  // --- Mouthfeel (single select; tap again to clear) ---
+  const mouthfeelEl = document.getElementById("mouthfeel-tags");
+  mouthfeelEl.addEventListener("click", (e) => {
     const tag = e.target.closest(".tag");
     if (!tag) return;
-    const f = tag.dataset.flavour;
-    if (selectedFlavours.has(f)) {
-      selectedFlavours.delete(f);
-      tag.classList.remove("selected");
-    } else {
-      selectedFlavours.add(f);
-      tag.classList.add("selected");
-    }
+    setMouthfeel(selectedMouthfeel === tag.dataset.value ? null : tag.dataset.value);
   });
+  function setMouthfeel(v) {
+    selectedMouthfeel = v || null;
+    mouthfeelEl.querySelectorAll(".tag").forEach((t) => {
+      t.classList.toggle("selected", t.dataset.value === selectedMouthfeel);
+    });
+  }
 
-  // --- Mouthfeel texture tags ---
-  document.getElementById("mouthfeel-tags").addEventListener("click", (e) => {
-    const tag = e.target.closest(".tag");
-    if (!tag) return;
-    const m = tag.dataset.mouthfeel;
-    if (selectedMouthfeel.has(m)) {
-      selectedMouthfeel.delete(m);
-      tag.classList.remove("selected");
-    } else {
-      selectedMouthfeel.add(m);
-      tag.classList.add("selected");
-    }
-  });
-
-  // --- Sensory dimension tags (tick multi-select) ---
-  const sensoryGroups = {
-    fragrance: document.getElementById("fragrance-tags"),
-    acidity: document.getElementById("acidity-tags"),
-    sweetness: document.getElementById("sweetness-tags"),
-    aftertaste: document.getElementById("aftertaste-tags"),
-    body: document.getElementById("body-tags"),
-    mouthfeelIntensity: document.getElementById("mouthfeel-intensity-tags"),
-    colour: document.getElementById("colour-tags"),
-  };
+  // --- Sensory flavour dimensions (tick multi-select, SCA flavour list) ---
+  const FLAVOR_ITEMS = [
+    "Floral",
+    "Fruity", "Berry", "Dried Fruit", "Citrus Fruit",
+    "Sour/Fermented", "Sour", "Fermented",
+    "Green/Vegetative",
+    "Other", "Chemical", "Musty/Earthy", "Woody",
+    "Roasted", "Cereal", "Burnt", "Tobacco",
+    "Nutty/Cocoa", "Nutty", "Cocoa",
+    "Spice",
+    "Sweet", "Vanilla/Vanillin", "Brown Sugar",
+  ];
+  const FLAVOR_DIMS = ["fragrance", "aroma", "flavor", "aftertaste"];
+  const sensoryGroups = {};
   const sensorySelected = {};
-  Object.entries(sensoryGroups).forEach(([key, container]) => {
+  FLAVOR_DIMS.forEach((key) => {
+    const container = document.getElementById(`${key}-tags`);
+    container.innerHTML = FLAVOR_ITEMS.map(
+      (f) => `<span class="tag" data-value="${f}">${f}</span>`
+    ).join("");
+    sensoryGroups[key] = container;
     sensorySelected[key] = new Set();
     container.addEventListener("click", (e) => {
       const tag = e.target.closest(".tag");
       if (!tag) return;
       const v = tag.dataset.value;
       const set = sensorySelected[key];
-      if (set.has(v)) {
-        set.delete(v);
-        tag.classList.remove("selected");
-      } else {
-        set.add(v);
-        tag.classList.add("selected");
-      }
+      if (set.has(v)) set.delete(v);
+      else set.add(v);
+      tag.classList.toggle("selected", set.has(v));
     });
   });
   function getSensoryValues(key) {
     return Array.from(sensorySelected[key]);
   }
   function setSensoryValues(key, values) {
-    const list = Array.isArray(values) ? values : values ? [values] : [];
-    sensorySelected[key] = new Set(list);
+    // Legacy Low/Medium/High strings are not flavour items, so they simply won't match.
+    const list = Array.isArray(values) ? values : [];
+    sensorySelected[key] = new Set(list.filter((v) => FLAVOR_ITEMS.includes(v)));
     sensoryGroups[key].querySelectorAll(".tag").forEach((tag) => {
       tag.classList.toggle("selected", sensorySelected[key].has(tag.dataset.value));
     });
   }
+
+  // --- Intensity sliders (1-15, "—" until moved) ---
+  const SLIDER_DIMS = ["acidity", "body", "sweetness"];
+  SLIDER_DIMS.forEach((key) => {
+    document.getElementById(key).addEventListener("input", () => setSlider(key, document.getElementById(key).value));
+  });
+  function setSlider(key, v) {
+    const input = document.getElementById(key);
+    const n = Number(v);
+    const valid = typeof v !== "boolean" && v !== null && v !== "" && Number.isInteger(n) && n >= 1 && n <= 15;
+    input.value = valid ? n : 8;
+    input.classList.toggle("unset", !valid);
+    input.dataset.set = valid ? "1" : "";
+    document.getElementById(`${key}-val`).textContent = valid ? n : "—";
+  }
+  function getSlider(key) {
+    const input = document.getElementById(key);
+    return input.dataset.set ? Number(input.value) : null;
+  }
+
   function resetSensoryValues() {
-    Object.keys(sensoryGroups).forEach((key) => setSensoryValues(key, []));
+    FLAVOR_DIMS.forEach((key) => setSensoryValues(key, []));
+    SLIDER_DIMS.forEach((key) => setSlider(key, null));
+    setMouthfeel(null);
   }
 
   // --- Water Cycle: dynamic pour stages ---
@@ -750,11 +760,6 @@
   }
 
   function readForm() {
-    const flavours = Array.from(selectedFlavours);
-    const other = document.getElementById("flavourOther").value.trim();
-    if (other) {
-      other.split(",").map((s) => s.trim()).filter(Boolean).forEach((f) => flavours.push(f));
-    }
     return {
       id: entryIdField.value || crypto.randomUUID(),
       parentId: parentIdField.value || null,
@@ -779,14 +784,13 @@
         document.getElementById("totalBrewSec").value
       ),
       fragrance: getSensoryValues("fragrance"),
-      acidity: getSensoryValues("acidity"),
-      sweetness: getSensoryValues("sweetness"),
+      aroma: getSensoryValues("aroma"),
+      flavor: getSensoryValues("flavor"),
       aftertaste: getSensoryValues("aftertaste"),
-      body: getSensoryValues("body"),
-      mouthfeel: getSensoryValues("mouthfeelIntensity"),
-      mouthfeelTextures: Array.from(selectedMouthfeel),
-      colour: getSensoryValues("colour"),
-      flavours,
+      acidity: getSlider("acidity"),
+      body: getSlider("body"),
+      sweetness: getSlider("sweetness"),
+      mouthfeel: selectedMouthfeel,
       rating: currentRating,
       learnings: document.getElementById("learnings").value.trim(),
       createdAt: new Date().toISOString(),
@@ -814,24 +818,14 @@
     document.getElementById("totalBrewMin").value = tb.min;
     document.getElementById("totalBrewSec").value = tb.sec;
     setSensoryValues("fragrance", entry.fragrance);
-    setSensoryValues("acidity", entry.acidity);
-    setSensoryValues("sweetness", entry.sweetness);
+    setSensoryValues("aroma", entry.aroma);
+    setSensoryValues("flavor", entry.flavor);
     setSensoryValues("aftertaste", entry.aftertaste);
-    setSensoryValues("body", entry.body);
-    setSensoryValues("mouthfeelIntensity", entry.mouthfeel);
-    setSensoryValues("colour", entry.colour);
+    setSlider("acidity", entry.acidity);
+    setSlider("body", entry.body);
+    setSlider("sweetness", entry.sweetness);
+    setMouthfeel(typeof entry.mouthfeel === "string" ? entry.mouthfeel : null);
     document.getElementById("learnings").value = "";
-
-    selectedFlavours = new Set(entry.flavours || []);
-    document.querySelectorAll("#flavour-tags .tag").forEach((tag) => {
-      tag.classList.toggle("selected", selectedFlavours.has(tag.dataset.flavour));
-    });
-    document.getElementById("flavourOther").value = "";
-
-    selectedMouthfeel = new Set(entry.mouthfeelTextures || []);
-    document.querySelectorAll("#mouthfeel-tags .tag").forEach((tag) => {
-      tag.classList.toggle("selected", selectedMouthfeel.has(tag.dataset.mouthfeel));
-    });
 
     currentRating = 0;
     renderRating();
@@ -843,10 +837,6 @@
     parentIdField.value = "";
     document.getElementById("date").valueAsDate = new Date();
     Object.values(otherFields).forEach(toggleOtherInput);
-    selectedFlavours = new Set();
-    document.querySelectorAll("#flavour-tags .tag").forEach((t) => t.classList.remove("selected"));
-    selectedMouthfeel = new Set();
-    document.querySelectorAll("#mouthfeel-tags .tag").forEach((t) => t.classList.remove("selected"));
     resetSensoryValues();
     fillPours([]);
     currentRating = 0;
@@ -929,9 +919,19 @@
     return `${m}:${String(s).padStart(2, "0")}`;
   }
 
-  function fmtMulti(v) {
-    if (!v) return "";
-    return Array.isArray(v) ? v.join("/") : v;
+  function fmtSensory(e) {
+    const parts = [];
+    const tags = (v) => (Array.isArray(v) ? v.filter((x) => FLAVOR_ITEMS.includes(x)) : []);
+    const num = (v) => (Number.isInteger(v) ? v : null);
+    [["Fragrance", e.fragrance], ["Aroma", e.aroma], ["Flavor", e.flavor], ["Aftertaste", e.aftertaste]].forEach(([n, v]) => {
+      const t = tags(v);
+      if (t.length) parts.push(`${n} ${t.join("/")}`);
+    });
+    [["Acidity", e.acidity], ["Body", e.body], ["Sweetness", e.sweetness]].forEach(([n, v]) => {
+      if (num(v) !== null) parts.push(`${n} ${v}`);
+    });
+    if (typeof e.mouthfeel === "string" && e.mouthfeel) parts.push(`Mouthfeel ${e.mouthfeel}`);
+    return parts.length ? parts.join(" · ") : "—";
   }
 
   function stars(n) {
@@ -974,7 +974,7 @@
       const poursCount = (e.pours && e.pours.length) || 0;
       const finalWater = poursCount ? e.pours[poursCount - 1].water : null;
       const timeStr = `${poursCount} pour${poursCount === 1 ? "" : "s"}${finalWater ? " · " + finalWater + "g" : ""} · ${fmtTime(e.totalBrewTimeSec)}`;
-      const sensoryStr = `${fmtMulti(e.acidity)} acidity, ${fmtMulti(e.body)} body, ${fmtMulti(e.sweetness)} sweetness${e.flavours && e.flavours.length ? ", " + e.flavours.join("/") : ""}${e.mouthfeelTextures && e.mouthfeelTextures.length ? ", " + e.mouthfeelTextures.join("/") : ""}`;
+      const sensoryStr = fmtSensory(e);
       const coffeeLabel = e.coffeeBrand ? `${e.coffeeBrand} · ${e.coffeeName}` : e.coffeeName;
 
       tr.innerHTML = `

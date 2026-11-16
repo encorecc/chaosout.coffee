@@ -263,7 +263,7 @@
 <main>
 
   <section class="panel">
-    <h2 id="form-title">新增沖煮計畫<span class="en">New Brew Plan</span></h2>
+    <h2 id="form-title">新增錄入<span class="en">New Brew Plan</span></h2>
     <form id="brew-form">
       <input type="hidden" id="entry-id" />
       <input type="hidden" id="parent-id" />
@@ -444,7 +444,7 @@
 
       <div class="actions">
         <button type="button" class="ghost" id="clear-form">清空表單</button>
-        <button type="submit" class="primary" id="submit-btn">儲存沖煮計畫</button>
+        <button type="submit" class="primary" id="submit-btn">儲存錄入</button>
       </div>
     </form>
   </section>
@@ -487,7 +487,7 @@
         </thead>
         <tbody id="history-body"></tbody>
       </table>
-      <div class="empty-state" id="empty-state">還沒有紀錄，開始記錄你的第一次沖煮計畫吧。</div>
+      <div class="empty-state" id="empty-state">還沒有紀錄，開始你的第一筆錄入吧。</div>
     </div>
   </section>
 
@@ -843,8 +843,8 @@
     fillPours([]);
     currentRating = 0;
     renderRating();
-    formTitle.innerHTML = '新增沖煮計畫<span class="en">New Brew Plan</span>';
-    submitBtn.textContent = "儲存沖煮計畫";
+    formTitle.innerHTML = '新增錄入<span class="en">New Brew Plan</span>';
+    submitBtn.textContent = "儲存錄入";
   }
 
   document.getElementById("clear-form").addEventListener("click", resetForm);
@@ -872,7 +872,7 @@
     entryIdField.value = "";
     parentIdField.value = entry.id;
     formTitle.innerHTML = `複製配方（來自 ${escapeHtml(entry.date)}），調整後儲存為新紀錄<span class="en">Clone Recipe</span>`;
-    submitBtn.textContent = "儲存為新的沖煮計畫";
+    submitBtn.textContent = "儲存為新的錄入";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -886,8 +886,8 @@
     document.getElementById("learnings").value = entry.learnings || "";
     currentRating = entry.rating || 0;
     renderRating();
-    formTitle.innerHTML = `編輯沖煮計畫（${escapeHtml(entry.date)}）<span class="en">Edit Brew Plan</span>`;
-    submitBtn.textContent = "更新沖煮計畫";
+    formTitle.innerHTML = `編輯錄入（${escapeHtml(entry.date)}）<span class="en">Edit Brew Plan</span>`;
+    submitBtn.textContent = "更新錄入";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 

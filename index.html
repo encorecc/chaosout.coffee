@@ -237,6 +237,8 @@
   .row-actions { display: flex; gap: 0.35rem; flex-wrap: wrap; }
   .row-actions button { padding: 0.3rem 0.55rem; font-size: 0.78rem; }
   .stars-mini { color: var(--tan); letter-spacing: 1px; }
+  .en { font-weight: 400; font-size: 0.85em; opacity: 0.7; margin-left: 0.35em; letter-spacing: 0; }
+  th .en { display: block; margin-left: 0; text-transform: none; }
   .empty-state { color: var(--muted); text-align: center; padding: 2rem; }
   .badge {
     display: inline-block;
@@ -261,32 +263,32 @@
 <main>
 
   <section class="panel">
-    <h2 id="form-title">新增 Brew Plan</h2>
+    <h2 id="form-title">新增沖煮計畫<span class="en">New Brew Plan</span></h2>
     <form id="brew-form">
       <input type="hidden" id="entry-id" />
       <input type="hidden" id="parent-id" />
 
       <fieldset>
-        <legend>基本資訊</legend>
+        <legend>基本資訊<span class="en">Basic Info</span></legend>
         <div class="grid">
           <div>
-            <label for="brewerName">Brewer / Student Name</label>
+            <label for="brewerName">沖煮者／學員<span class="en">Brewer / Student</span></label>
             <input id="brewerName" type="text" />
           </div>
           <div>
-            <label for="date">Date</label>
+            <label for="date">日期<span class="en">Date</span></label>
             <input id="date" type="date" required />
           </div>
           <div>
-            <label for="coffeeBrand">Brand & Series</label>
-            <input id="coffeeBrand" type="text" placeholder="e.g. Chaos Out / Signature Blend" />
+            <label for="coffeeBrand">品牌與系列<span class="en">Brand &amp; Series</span></label>
+            <input id="coffeeBrand" type="text" placeholder="例：Chaos Out / Signature Blend" />
           </div>
           <div>
-            <label for="coffeeName">Coffee (origin / variety)</label>
-            <input id="coffeeName" type="text" required placeholder="e.g. Ethiopia Yirgacheffe" />
+            <label for="coffeeName">咖啡豆（產區／品種）<span class="en">Coffee</span></label>
+            <input id="coffeeName" type="text" required placeholder="例：Ethiopia Yirgacheffe" />
           </div>
           <div>
-            <label for="processing">Processing</label>
+            <label for="processing">處理法<span class="en">Processing</span></label>
             <select id="processing">
               <option>Washed</option>
               <option>Natural</option>
@@ -296,17 +298,17 @@
             <input id="processingOther" type="text" placeholder="請輸入處理法" style="margin-top:0.5rem; display:none;" />
           </div>
           <div>
-            <label for="notesAdvertised">Notes Advertised</label>
-            <input id="notesAdvertised" type="text" placeholder="e.g. Blueberry, Floral, Chocolate" />
+            <label for="notesAdvertised">標示風味<span class="en">Notes Advertised</span></label>
+            <input id="notesAdvertised" type="text" placeholder="例：Blueberry, Floral, Chocolate" />
           </div>
         </div>
       </fieldset>
 
       <fieldset>
-        <legend>Brewing Method</legend>
+        <legend>沖煮方式<span class="en">Brewing Method</span></legend>
         <div class="grid">
           <div>
-            <label for="brewMethod">Method</label>
+            <label for="brewMethod">沖煮法<span class="en">Method</span></label>
             <select id="brewMethod">
               <option>Immersion</option>
               <option selected>Gravity</option>
@@ -315,7 +317,7 @@
             </select>
           </div>
           <div>
-            <label for="filterMedium">Filter Medium</label>
+            <label for="filterMedium">濾材<span class="en">Filter Medium</span></label>
             <select id="filterMedium">
               <option selected>Paper</option>
               <option>Cloth</option>
@@ -323,78 +325,78 @@
             </select>
           </div>
           <div>
-            <label for="brewDevice">Brewing Device</label>
-            <input id="brewDevice" type="text" placeholder="e.g. V60, AeroPress" />
+            <label for="brewDevice">器具<span class="en">Brewing Device</span></label>
+            <input id="brewDevice" type="text" placeholder="例：V60, AeroPress" />
           </div>
           <div>
-            <label for="grinder">Grinder</label>
-            <input id="grinder" type="text" placeholder="e.g. Comandante C40" />
+            <label for="grinder">磨豆機<span class="en">Grinder</span></label>
+            <input id="grinder" type="text" placeholder="例：Comandante C40" />
           </div>
           <div>
-            <label for="grindSetting">Grind Setting</label>
-            <input id="grindSetting" type="text" placeholder="e.g. 7.5 clicks" />
+            <label for="grindSetting">研磨度<span class="en">Grind Setting</span></label>
+            <input id="grindSetting" type="text" placeholder="例：7.5 clicks" />
           </div>
         </div>
       </fieldset>
 
       <fieldset>
-        <legend>Brew Recipe</legend>
+        <legend>沖煮配方<span class="en">Brew Recipe</span></legend>
         <div class="grid">
           <div>
-            <label for="ratio">Coffee to Water Ratio (1 : x)</label>
-            <input id="ratio" type="number" step="0.1" min="0" placeholder="e.g. 15" />
+            <label for="ratio">粉水比 (1 : x)<span class="en">Ratio</span></label>
+            <input id="ratio" type="number" step="0.1" min="0" placeholder="例：15" />
           </div>
           <div>
-            <label for="coffeeDose">Coffee Dose (g)</label>
+            <label for="coffeeDose">粉量 (g)<span class="en">Coffee Dose</span></label>
             <input id="coffeeDose" type="number" step="0.1" min="0" />
           </div>
           <div>
-            <label for="temperature">Temperature (°C)</label>
+            <label for="temperature">水溫 (°C)<span class="en">Temperature</span></label>
             <input id="temperature" type="number" step="1" />
           </div>
           <div>
-            <label for="waterDose">Water Dose (g / mL)</label>
+            <label for="waterDose">水量 (g / mL)<span class="en">Water Dose</span></label>
             <input id="waterDose" type="number" step="0.1" min="0" />
           </div>
         </div>
       </fieldset>
 
       <fieldset>
-        <legend>Water Cycle</legend>
+        <legend>注水分段<span class="en">Water Cycle</span></legend>
         <div class="pours-list" id="pours-container"></div>
-        <button type="button" class="ghost" id="add-pour">+ 加一段注水</button>
+        <button type="button" class="ghost" id="add-pour">+ 新增一段注水</button>
         <div class="grid" style="margin-top:0.75rem;">
           <div>
-            <label for="totalBrewTime">Total Brew Time</label>
+            <label for="totalBrewTime">總沖煮時間<span class="en">Total Brew Time</span></label>
             <div class="time-pair">
-              <input id="totalBrewMin" type="number" min="0" placeholder="min" />
+              <input id="totalBrewMin" type="number" min="0" placeholder="分" />
               <span>:</span>
-              <input id="totalBrewSec" type="number" min="0" max="59" placeholder="sec" />
+              <input id="totalBrewSec" type="number" min="0" max="59" placeholder="秒" />
             </div>
           </div>
         </div>
       </fieldset>
 
       <fieldset>
-        <legend>Sensory Assessment</legend>
+        <legend>感官評估<span class="en">Sensory Assessment</span></legend>
         <div>
-          <label>Fragrance</label>
+          <label>乾香<span class="en">Fragrance</span></label>
           <div class="tags flavor-tags" id="fragrance-tags"></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Aroma</label>
+          <label>濕香<span class="en">Aroma</span></label>
           <div class="tags flavor-tags" id="aroma-tags"></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Flavor</label>
+          <label>風味<span class="en">Flavor</span></label>
           <div class="tags flavor-tags" id="flavor-tags"></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Aftertaste</label>
+          <label>餘韻<span class="en">Aftertaste</span></label>
           <div class="tags flavor-tags" id="aftertaste-tags"></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label for="acidity">Acidity (1-15)</label>
+          <label for="acidity">酸質 (1-15)<span class="en">Acidity</span></label>
           <div class="slider-row">
             <input id="acidity" class="sensory-slider unset" type="range" min="1" max="15" step="1" value="8" />
             <span class="slider-val" id="acidity-val">—</span>
@@ -402,7 +404,7 @@
           <div class="slider-scale"><span>1</span><span>5</span><span>10</span><span>15</span></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label for="body">Body (1-15)</label>
+          <label for="body">醇厚度 (1-15)<span class="en">Body</span></label>
           <div class="slider-row">
             <input id="body" class="sensory-slider unset" type="range" min="1" max="15" step="1" value="8" />
             <span class="slider-val" id="body-val">—</span>
@@ -410,7 +412,7 @@
           <div class="slider-scale"><span>1</span><span>5</span><span>10</span><span>15</span></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label for="sweetness">Sweetness (1-15)</label>
+          <label for="sweetness">甜感 (1-15)<span class="en">Sweetness</span></label>
           <div class="slider-row">
             <input id="sweetness" class="sensory-slider unset" type="range" min="1" max="15" step="1" value="8" />
             <span class="slider-val" id="sweetness-val">—</span>
@@ -418,7 +420,7 @@
           <div class="slider-scale"><span>1</span><span>5</span><span>10</span><span>15</span></div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Mouthfeel</label>
+          <label>口感<span class="en">Mouthfeel</span></label>
           <div class="tags" id="mouthfeel-tags">
             <span class="tag" data-value="Rough">Rough</span>
             <span class="tag" data-value="Smooth">Smooth</span>
@@ -428,7 +430,7 @@
           </div>
         </div>
         <div style="margin-top:0.75rem;">
-          <label>Overall (1-10)</label>
+          <label>整體評分 (1-10)<span class="en">Overall</span></label>
           <div class="rating" id="rating">
             <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span><span data-v="6">★</span><span data-v="7">★</span><span data-v="8">★</span><span data-v="9">★</span><span data-v="10">★</span>
           </div>
@@ -436,22 +438,22 @@
       </fieldset>
 
       <fieldset>
-        <legend>Learnings</legend>
+        <legend>心得<span class="en">Learnings</span></legend>
         <textarea id="learnings" placeholder="這次沖煮的心得、下次要調整的地方..."></textarea>
       </fieldset>
 
       <div class="actions">
         <button type="button" class="ghost" id="clear-form">清空表單</button>
-        <button type="submit" class="primary" id="submit-btn">儲存 Brew Plan</button>
+        <button type="submit" class="primary" id="submit-btn">儲存沖煮計畫</button>
       </div>
     </form>
   </section>
 
   <section class="panel">
-    <h2>紀錄與比較</h2>
+    <h2>紀錄與比較<span class="en">History &amp; Compare</span></h2>
     <div class="toolbar">
       <div>
-        <label for="filter-coffee">依咖啡豆篩選</label>
+        <label for="filter-coffee">依咖啡豆篩選<span class="en">Filter by Coffee</span></label>
         <select id="filter-coffee">
           <option value="">全部</option>
         </select>
@@ -473,19 +475,19 @@
       <table id="history-table">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Coffee</th>
-            <th>Recipe (ratio / dose / temp)</th>
-            <th>Pours / Brew Time</th>
-            <th>Sensory</th>
-            <th>Rating</th>
-            <th>Learnings</th>
+            <th>日期<span class="en">Date</span></th>
+            <th>咖啡豆<span class="en">Coffee</span></th>
+            <th>配方<span class="en">Recipe</span></th>
+            <th>注水／時間<span class="en">Pours / Time</span></th>
+            <th>感官<span class="en">Sensory</span></th>
+            <th>整體評分<span class="en">Overall</span></th>
+            <th>心得<span class="en">Learnings</span></th>
             <th></th>
           </tr>
         </thead>
         <tbody id="history-body"></tbody>
       </table>
-      <div class="empty-state" id="empty-state">還沒有紀錄，開始記錄你的第一次 Brew Plan 吧。</div>
+      <div class="empty-state" id="empty-state">還沒有紀錄，開始記錄你的第一次沖煮計畫吧。</div>
     </div>
   </section>
 
@@ -616,7 +618,7 @@
   const poursContainer = document.getElementById("pours-container");
   function renumberPours() {
     poursContainer.querySelectorAll(".pour-row").forEach((row, i) => {
-      row.querySelector(".pour-index").textContent = `Pour ${i + 1}`;
+      row.querySelector(".pour-index").textContent = `第 ${i + 1} 段`;
       const startMin = row.querySelector(".pour-start-min");
       const startSec = row.querySelector(".pour-start-sec");
       if (i === 0) {
@@ -640,28 +642,28 @@
       </div>
       <div class="grid">
         <div>
-          <label>Start Time</label>
+          <label>開始時間<span class="en">Start Time</span></label>
           <div class="time-pair">
-            <input type="number" min="0" class="pour-start-min" placeholder="min" />
+            <input type="number" min="0" class="pour-start-min" placeholder="分" />
             <span>:</span>
-            <input type="number" min="0" max="59" class="pour-start-sec" placeholder="sec" />
+            <input type="number" min="0" max="59" class="pour-start-sec" placeholder="秒" />
           </div>
         </div>
         <div>
-          <label>End Time</label>
+          <label>結束時間<span class="en">End Time</span></label>
           <div class="time-pair">
-            <input type="number" min="0" class="pour-end-min" placeholder="min" />
+            <input type="number" min="0" class="pour-end-min" placeholder="分" />
             <span>:</span>
-            <input type="number" min="0" max="59" class="pour-end-sec" placeholder="sec" />
+            <input type="number" min="0" max="59" class="pour-end-sec" placeholder="秒" />
           </div>
         </div>
         <div>
-          <label>Water To (cumulative, g)</label>
+          <label>累計水量 (g)<span class="en">Water To</span></label>
           <input type="number" step="0.1" min="0" class="pour-water" />
         </div>
         <div>
-          <label>Note (optional)</label>
-          <input type="text" class="pour-note" placeholder="e.g. Open the Switch" />
+          <label>備註（選填）<span class="en">Note</span></label>
+          <input type="text" class="pour-note" placeholder="例：Open the Switch" />
         </div>
       </div>
     `;
@@ -841,8 +843,8 @@
     fillPours([]);
     currentRating = 0;
     renderRating();
-    formTitle.textContent = "新增 Brew Plan";
-    submitBtn.textContent = "儲存 Brew Plan";
+    formTitle.innerHTML = '新增沖煮計畫<span class="en">New Brew Plan</span>';
+    submitBtn.textContent = "儲存沖煮計畫";
   }
 
   document.getElementById("clear-form").addEventListener("click", resetForm);
@@ -869,8 +871,8 @@
     fillForm(entry);
     entryIdField.value = "";
     parentIdField.value = entry.id;
-    formTitle.textContent = `複製配方（來自 ${entry.date}）— 調整後儲存為新紀錄`;
-    submitBtn.textContent = "儲存為新的 Brew Plan";
+    formTitle.innerHTML = `複製配方（來自 ${escapeHtml(entry.date)}），調整後儲存為新紀錄<span class="en">Clone Recipe</span>`;
+    submitBtn.textContent = "儲存為新的沖煮計畫";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -884,8 +886,8 @@
     document.getElementById("learnings").value = entry.learnings || "";
     currentRating = entry.rating || 0;
     renderRating();
-    formTitle.textContent = `編輯 Brew Plan（${entry.date}）`;
-    submitBtn.textContent = "更新 Brew Plan";
+    formTitle.innerHTML = `編輯沖煮計畫（${escapeHtml(entry.date)}）<span class="en">Edit Brew Plan</span>`;
+    submitBtn.textContent = "更新沖煮計畫";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -923,14 +925,14 @@
     const parts = [];
     const tags = (v) => (Array.isArray(v) ? v.filter((x) => FLAVOR_ITEMS.includes(x)) : []);
     const num = (v) => (Number.isInteger(v) ? v : null);
-    [["Fragrance", e.fragrance], ["Aroma", e.aroma], ["Flavor", e.flavor], ["Aftertaste", e.aftertaste]].forEach(([n, v]) => {
+    [["乾香", e.fragrance], ["濕香", e.aroma], ["風味", e.flavor], ["餘韻", e.aftertaste]].forEach(([n, v]) => {
       const t = tags(v);
       if (t.length) parts.push(`${n} ${t.join("/")}`);
     });
-    [["Acidity", e.acidity], ["Body", e.body], ["Sweetness", e.sweetness]].forEach(([n, v]) => {
+    [["酸質", e.acidity], ["醇厚度", e.body], ["甜感", e.sweetness]].forEach(([n, v]) => {
       if (num(v) !== null) parts.push(`${n} ${v}`);
     });
-    if (typeof e.mouthfeel === "string" && e.mouthfeel) parts.push(`Mouthfeel ${e.mouthfeel}`);
+    if (typeof e.mouthfeel === "string" && e.mouthfeel) parts.push(`口感 ${e.mouthfeel}`);
     return parts.length ? parts.join(" · ") : "—";
   }
 
@@ -973,13 +975,13 @@
       const recipeStr = `1:${e.ratio || "?"} · ${e.coffeeDose || "?"}g · ${e.temperature || "?"}°C`;
       const poursCount = (e.pours && e.pours.length) || 0;
       const finalWater = poursCount ? e.pours[poursCount - 1].water : null;
-      const timeStr = `${poursCount} pour${poursCount === 1 ? "" : "s"}${finalWater ? " · " + finalWater + "g" : ""} · ${fmtTime(e.totalBrewTimeSec)}`;
+      const timeStr = `${poursCount} 段${finalWater ? " · " + finalWater + "g" : ""} · ${fmtTime(e.totalBrewTimeSec)}`;
       const sensoryStr = fmtSensory(e);
       const coffeeLabel = e.coffeeBrand ? `${e.coffeeBrand} · ${e.coffeeName}` : e.coffeeName;
 
       tr.innerHTML = `
         <td>${escapeHtml(e.date)}</td>
-        <td>${escapeHtml(coffeeLabel)}${e.id === bestId ? '<span class="badge">Best</span>' : ""}</td>
+        <td>${escapeHtml(coffeeLabel)}${e.id === bestId ? '<span class="badge">最佳</span>' : ""}</td>
         <td>${escapeHtml(recipeStr)}</td>
         <td>${escapeHtml(timeStr)}</td>
         <td>${escapeHtml(sensoryStr)}</td>
